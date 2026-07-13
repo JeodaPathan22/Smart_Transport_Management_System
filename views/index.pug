@@ -1,0 +1,63 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title STMS - Smart Transport Management System
+    link(rel="stylesheet" href="/stylesheet/style.css")
+    //- Adding Google Fonts and FontAwesome Icons for a modern look
+    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap")
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+  body
+    header.main-header
+      .header-container
+        .logo
+          i.fa-solid.fa-bus-simple
+          span STMS
+        h1 Smart Transport Management System
+
+    main.homepage-container
+      section.intro-section
+        p.tagline Optimizing University Shuttle Logistics
+        p.description Streamlining routes, real-time schedules, and capacity management for a smarter daily commute.
+
+      section.login-portal-grid
+        //- Left Path: Driver Portal
+        .portal-card.driver-card
+          .card-header
+            .icon-wrapper
+              i.fa-solid.fa-id-card
+            h2 Driver Login
+            p Access daily timetables & manage capacities
+          form.login-form(action="/auth/driver" method="POST")
+            .input-group
+              label(for="driver-email") Email / Username
+              input#driver-email(type="email" name="email" placeholder="driver@university.edu" required)
+            .input-group
+              label(for="driver-password") Password
+              input#driver-password(type="password" name="password" placeholder="••••••••" required)
+            button.btn.btn-driver(type="submit") 
+              | Driver Dashboard 
+              i.fa-solid.fa-arrow-right
+
+        //- Right Path: Student Portal
+        .portal-card.student-card
+          .card-header
+            .icon-wrapper
+              i.fa-solid.fa-graduation-cap
+            h2 Student Login
+            p Check routes, live schedules & profiles
+          form.login-form(action="/auth/student" method="POST")
+            .input-group
+              label(for="student-id") Student ID / Email
+              input#student-id(type="text" name="student_id" placeholder="e.g., ST12345 or email" required)
+            .input-group
+              label(for="student-password") Password
+              input#student-password(type="password" name="password" placeholder="••••••••" required)
+            button.btn.btn-student(type="submit") 
+              | Student Dashboard 
+              i.fa-solid.fa-arrow-right
+
+
+    footer.main-footer
+      p &copy; 2026 Smart Transport Management System (STMS). Relational Database & Full-Stack Implementation.
