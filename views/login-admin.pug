@@ -1,0 +1,109 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{title} - STMS
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    link(rel="stylesheet", href="/stylesheet/style.css")
+  body
+    header.site-header
+      .container
+        .header-wrapper
+          .logo-container
+            a(href="/")
+              i.fa-solid.fa-bus-simple
+              span.brand-title STMS
+          nav.main-nav
+            ul.nav-list
+              li.nav-item: a.nav-link(href="/") Home
+              li.nav-item: a.nav-link(href="/routes") Routes
+              li.nav-item: a.nav-link(href="/timetable") Timetable
+              li.nav-item: a.nav-link(href="/notices") Notices
+              li.nav-item: a.nav-link(href="/about") About
+              li.nav-item: a.nav-link(href="/contact") Contact
+
+          .header-actions
+            .login-dropdown
+              button#loginBtn.btn.btn-login(type="button")
+                i.fas.fa-sign-in-alt
+                |  Login 
+                i.fas.fa-chevron-down.dropdown-icon
+              .dropdown-menu#loginMenu
+                a.dropdown-item(href="/login-student")
+                  i.fas.fa-user-graduate
+                  .item-text
+                    strong Student Login
+                    span Access route schedules & pass
+                a.dropdown-item(href="/login-driver")
+                  i.fas.fa-id-card-clip
+                  .item-text
+                    strong Driver Login
+                    span Manage trips & updates
+                a.dropdown-item(href="/login-admin")
+                  i.fas.fa-user-shield
+                  .item-text
+                    strong Admin Login
+                    span Manage routes and accounts
+
+    main.page-shell
+      .container
+        .auth-layout
+          .auth-card
+            .auth-badge Admin Portal
+            h1 Administrator access
+            p Manage routes, drivers, and student accounts from one secure dashboard.
+
+            if message
+              .alert.alert-success= message
+
+            form.auth-form(action="/login-admin", method="POST")
+              .form-group
+                label(for="adminUsername") Username
+                .input-wrapper
+                  input#adminUsername.form-control(type="text", name="username", placeholder="Enter admin username", required)
+                  i.fas.fa-user.input-icon
+
+              .form-group
+                label(for="adminPassword") Password
+                .input-wrapper
+                  input#adminPassword.form-control(type="password", name="password", placeholder="Enter admin password", required)
+                  i.fas.fa-lock.input-icon
+
+              button.btn.btn-login(type="submit")
+                i.fas.fa-sign-in-alt
+                |  Sign In
+
+          .auth-sidebar
+            h2 Admin controls
+            ul.auth-list
+              li
+                i.fas.fa-route
+                span Assign routes to drivers
+              li
+                i.fas.fa-user-plus
+                span Create student and driver accounts
+              li
+                i.fas.fa-bullhorn
+                span Publish transport updates
+
+    script.
+      document.addEventListener('DOMContentLoaded', () => {
+        const loginBtn = document.getElementById('loginBtn');
+        const loginMenu = document.getElementById('loginMenu');
+        const loginContainer = document.querySelector('.login-dropdown');
+        if (loginBtn && loginMenu) {
+          loginBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            loginMenu.classList.toggle('show');
+            loginContainer.classList.toggle('active');
+          });
+          document.addEventListener('click', (e) => {
+            if (!loginContainer.contains(e.target)) {
+              loginMenu.classList.remove('show');
+              loginContainer.classList.remove('active');
+            }
+          });
+        }
+      });

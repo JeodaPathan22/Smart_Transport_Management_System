@@ -1,0 +1,110 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{title} - STMS
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    link(rel="stylesheet", href="/stylesheet/style.css")
+  body
+    header.site-header
+      .container
+        .header-wrapper
+          .logo-container
+            a(href="/")
+              i.fa-solid.fa-bus-simple
+              span.brand-title STMS
+          nav.main-nav
+            ul.nav-list
+              li.nav-item: a.nav-link(href="/") Home
+              li.nav-item: a.nav-link(href="/routes") Routes
+              li.nav-item: a.nav-link.active(href="/timetable") Timetable
+              li.nav-item: a.nav-link(href="/notices") Notices
+              li.nav-item: a.nav-link(href="/about") About
+              li.nav-item: a.nav-link(href="/contact") Contact
+
+          .header-actions
+            .login-dropdown
+              button#loginBtn.btn.btn-login(type="button")
+                i.fas.fa-sign-in-alt
+                |  Login 
+                i.fas.fa-chevron-down.dropdown-icon
+              .dropdown-menu#loginMenu
+                a.dropdown-item(href="/login-student")
+                  i.fas.fa-user-graduate
+                  .item-text
+                    strong Login as Student
+                    span Access route schedules & pass
+                a.dropdown-item(href="/login-driver")
+                  i.fas.fa-id-card-clip
+                  .item-text
+                    strong Login as Driver
+                    span Manage trips & updates
+                a.dropdown-item(href="/signup")
+                  i.fas.fa-user-plus
+                  .item-text
+                    strong Sign Up
+                    span Create a new account
+                a.dropdown-item(href="/login-admin")
+                  i.fas.fa-user-shield
+                  .item-text
+                    strong Admin Login
+                    span Manage routes and accounts
+    main.page-shell
+      .container
+        .page-card
+          h1 Bus Timetable
+          p Review the regular departure and arrival timings for the student transport service.
+
+          .info-grid
+            .info-card
+              .info-card-header
+                .header-title
+                  i.fas.fa-clock
+                  h3 Morning Schedule
+              .notice-list
+                .notice-item
+                  .notice-icon
+                    i.fas.fa-bus
+                  .notice-content
+                    h5 07:00 AM
+                    p First departure from Shahjalal Uposohor.
+                .notice-item
+                  .notice-icon
+                    i.fas.fa-bus
+                  .notice-content
+                    h5 07:15 AM
+                    p Departure from Sylhet City route.
+                .notice-item
+                  .notice-icon
+                    i.fas.fa-bus
+                  .notice-content
+                    h5 07:30 AM
+                    p Departure from Subidbazar route.
+
+            .info-card
+              .info-card-header
+                .header-title
+                  i.fas.fa-calendar-day
+                  h3 Evening Schedule
+              .notice-list
+                .notice-item
+                  .notice-icon
+                    i.fas.fa-bus
+                  .notice-content
+                    h5 04:30 PM
+                    p Return buses begin service from campus.
+                .notice-item
+                  .notice-icon
+                    i.fas.fa-bus
+                  .notice-content
+                    h5 05:15 PM
+                    p Evening departures for city routes.
+                .notice-item
+                  .notice-icon
+                    i.fas.fa-bus
+                  .notice-content
+                    h5 06:00 PM
+                    p Final shuttle service for late commuters.
+

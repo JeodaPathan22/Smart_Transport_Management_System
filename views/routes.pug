@@ -1,0 +1,116 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{title} - STMS
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    link(rel="stylesheet", href="/stylesheet/style.css")
+  body
+    header.site-header
+      .container
+        .header-wrapper
+          .logo-container
+            a(href="/")
+              i.fa-solid.fa-bus-simple
+              span.brand-title STMS
+          nav.main-nav
+            ul.nav-list
+              li.nav-item: a.nav-link(href="/") Home
+              li.nav-item: a.nav-link.active(href="/routes") Routes
+              li.nav-item: a.nav-link(href="/timetable") Timetable
+              li.nav-item: a.nav-link(href="/notices") Notices
+              li.nav-item: a.nav-link(href="/about") About
+              li.nav-item: a.nav-link(href="/contact") Contact
+
+          .header-actions
+            .login-dropdown
+              button#loginBtn.btn.btn-login(type="button")
+                i.fas.fa-sign-in-alt
+                |  Login 
+                i.fas.fa-chevron-down.dropdown-icon
+              .dropdown-menu#loginMenu
+                a.dropdown-item(href="/login-student")
+                  i.fas.fa-user-graduate
+                  .item-text
+                    strong Login as Student
+                    span Access route schedules & pass
+                a.dropdown-item(href="/login-driver")
+                  i.fas.fa-id-card-clip
+                  .item-text
+                    strong Login as Driver
+                    span Manage trips & updates
+                a.dropdown-item(href="/signup")
+                  i.fas.fa-user-plus
+                  .item-text
+                    strong Sign Up
+                    span Create a new account
+                a.dropdown-item(href="/login-admin")
+                  i.fas.fa-user-shield
+                  .item-text
+                    strong Admin Login
+                    span Manage routes and accounts
+    main.page-shell
+      .container
+        .page-card
+          h1 Routes & Schedules
+          p Browse the transport routes serving Metropolitan University and plan your trip with confidence.
+
+          .info-grid
+            .info-card
+              .info-card-header
+                .header-title
+                  i.fas.fa-route
+                  h3 Main Routes
+              .route-list
+                .route-item
+                  .route-badge R1
+                  .route-details
+                    h5 Sylhet City → Metropolitan University
+                    p Zindabazar, Chowhatta, Shibganj
+                  .route-time
+                    span.time-slot Morning
+                    span.time 07:15 AM
+                .route-item
+                  .route-badge R2
+                  .route-details
+                    h5 Subidbazar → Metropolitan University
+                    p Kazir Bazar, Bondor Bazar
+                  .route-time
+                    span.time-slot Morning
+                    span.time 07:30 AM
+                .route-item
+                  .route-badge R3
+                  .route-details
+                    h5 Shahjalal Uposohor → MU
+                    p Jetukula, Housing Estate
+                  .route-time
+                    span.time-slot Morning
+                    span.time 07:00 AM
+
+            .info-card
+              .info-card-header
+                .header-title
+                  i.fas.fa-map-pin
+                  h3 Popular Stops
+              .notice-list
+                .notice-item
+                  .notice-icon
+                    i.fas.fa-circle
+                  .notice-content
+                    h5 Zindabazar Bus Stand
+                    p Major pickup point for city passengers.
+                .notice-item
+                  .notice-icon
+                    i.fas.fa-circle
+                  .notice-content
+                    h5 Subidbazar Point
+                    p Convenient stop for students and staff.
+                .notice-item
+                  .notice-icon
+                    i.fas.fa-circle
+                  .notice-content
+                    h5 Metropolitan University Gate
+                    p Final drop-off point for all routes.
+

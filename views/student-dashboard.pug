@@ -1,0 +1,76 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{title} - STMS
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    link(rel="stylesheet", href="/stylesheet/style.css")
+  body
+    header.site-header
+      .container
+        .header-wrapper
+          .logo-container
+            a(href="/")
+              i.fa-solid.fa-bus-simple
+              span.brand-title STMS
+          .header-actions
+            a.btn.btn-outline(href="/logout")
+              i.fas.fa-sign-out-alt
+              |  Logout
+
+    main.page-shell
+      .container
+        .page-card
+          h1 Student Dashboard
+          p Welcome, your account is now linked to the transport system.
+
+          if message
+            .alert.alert-success= message
+
+          .info-card
+            .info-card-header
+              .header-title
+                i.fas.fa-user-graduate
+                h3 Account Details
+            p Email: #{user.email || 'Not available'}
+            p Student ID: #{user.studentId}
+
+          .info-card(style="margin-top: 1.5rem")
+            .info-card-header
+              .header-title
+                i.fas.fa-route
+                h3 Book a Slot
+            form.auth-form(action="/student-dashboard/book", method="POST")
+              .form-group
+                label(for="routeSelect") Select Route
+                select#routeSelect.form-control(name="routeId", required)
+                  option(value="" disabled selected) Choose a route
+                  each route in routes
+                    option(value=route.id)= route.route_name + ' - ' + route.start_point + ' to ' + route.end_point
+              .form-group
+                label(for="travelDate") Travel Date
+                input#travelDate.form-control(type="date", name="travelDate", required)
+              .form-group
+                label(for="travelTime") Travel Time
+                input#travelTime.form-control(type="time", name="travelTime", required)
+              button.btn.btn-login(type="submit") Book Slot
+
+          .info-card(style="margin-top: 1.5rem")
+            .info-card-header
+              .header-title
+                i.fas.fa-list
+                h3 Your Bookings
+            if bookings && bookings.length
+              ul.notice-list
+                each booking in bookings
+                  li.notice-item
+                    .notice-icon
+                      i.fas.fa-calendar-check
+                    .notice-content
+                      h5= booking.route_name || 'Route'
+                      p #{booking.start_point || ''} → #{booking.end_point || ''}
+                      span.notice-date= (booking.travel_date || 'No date') + ' at ' + (booking.travel_time || 'No time')
+            else
+              p No bookings yet.

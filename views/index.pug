@@ -2,62 +2,434 @@ doctype html
 html(lang="en")
   head
     meta(charset="UTF-8")
-    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
     title STMS - Smart Transport Management System
-    link(rel="stylesheet" href="/stylesheet/style.css")
-    //- Adding Google Fonts and FontAwesome Icons for a modern look
-    link(rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap")
-    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    // External Fonts & Icon Libraries
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    link(rel="stylesheet", href="/stylesheet/style.css")
+
   body
-    header.main-header
-      .header-container
-        .logo
-          i.fa-solid.fa-bus-simple
-          span STMS
-        h1 Smart Transport Management System
+    // ==========================================
+    // 1. SITE HEADER
+    // ==========================================
+    header.site-header
+      .container
+        .header-wrapper
+          .logo-container
+            a(href="/")
+              i.fa-solid.fa-bus-simple
+              span.brand-title STMS
+          
+          nav.main-nav
+            ul.nav-list
+              li.nav-item: a.nav-link.active(href="/") Home
+              li.nav-item: a.nav-link(href="/routes") Routes
+              li.nav-item: a.nav-link(href="/timetable") Timetable
+              li.nav-item: a.nav-link(href="/notices") Notices
+              li.nav-item: a.nav-link(href="/about") About
+              li.nav-item: a.nav-link(href="/contact") Contact
 
-    main.homepage-container
-      section.intro-section
-        p.tagline Optimizing University Shuttle Logistics
-        p.description Streamlining routes, real-time schedules, and capacity management for a smarter daily commute.
+          .header-actions
+            if user && user.role === 'student'
+              .profile-dropdown
+                button.profile-trigger(type="button")
+                  .profile-avatar= user.fullName ? user.fullName.charAt(0).toUpperCase() : (user.email ? user.email.charAt(0).toUpperCase() : 'S')
+                  .profile-meta
+                    span Student Portal
+                    strong= user.fullName || user.email || 'Student'
+                .profile-menu
+                  a.profile-menu-item(href="#student-bookings")
+                    i.fas.fa-calendar-check
+                    span My Bookings
+                  a.profile-menu-item(href="/logout")
+                    i.fas.fa-sign-out-alt
+                    span Logout
+            else
+              .login-dropdown
+                button#loginBtn.btn.btn-login(type="button")
+                  i.fas.fa-sign-in-alt
+                  |  Login 
+                  i.fas.fa-chevron-down.dropdown-icon
+                
+                .dropdown-menu#loginMenu
+                  a.dropdown-item(href="/login-student")
+                    i.fas.fa-user-graduate
+                    .item-text
+                      strong Login as Student
+                      span Access route schedules & pass
+                  a.dropdown-item(href="/login-driver")
+                    i.fas.fa-id-card-clip
+                    .item-text
+                      strong Login as Driver
+                      span Manage trips & updates
+                  a.dropdown-item(href="/signup")
+                    i.fas.fa-user-plus
+                    .item-text
+                      strong Sign Up
+                      span Create a new account
+                  a.dropdown-item(href="/login-admin")
+                    i.fas.fa-user-shield
+                    .item-text
+                      strong Admin Login
+                      span Manage routes and accounts
 
-      section.login-portal-grid
-        //- Left Path: Driver Portal
-        .portal-card.driver-card
-          .card-header
-            .icon-wrapper
-              i.fa-solid.fa-id-card
-            h2 Driver Login
-            p Access daily timetables & manage capacities
-          form.login-form(action="/auth/driver" method="POST")
-            .input-group
-              label(for="driver-email") Email / Username
-              input#driver-email(type="email" name="email" placeholder="driver@university.edu" required)
-            .input-group
-              label(for="driver-password") Password
-              input#driver-password(type="password" name="password" placeholder="••••••••" required)
-            button.btn.btn-driver(type="submit") 
-              | Driver Dashboard 
-              i.fa-solid.fa-arrow-right
+    // ==========================================
+    // 2. HERO BANNER SECTION
+    // ==========================================
+    section.hero-banner
+      .container
+        .hero-content
+          h1 Your Journey. #[br] Our Responsibility.
+          p Safe, reliable and comfortable transport services for the Metropolitan University community.
+          
+          .hero-features
+            .feature-item
+              i.fas.fa-shield-alt
+              span Safe & Secure
+            .feature-item
+              i.fas.fa-clock
+              span On Time
+            .feature-item
+              i.fas.fa-users
+              span For Everyone
 
-        //- Right Path: Student Portal
-        .portal-card.student-card
-          .card-header
-            .icon-wrapper
-              i.fa-solid.fa-graduation-cap
-            h2 Student Login
-            p Check routes, live schedules & profiles
-          form.login-form(action="/auth/student" method="POST")
-            .input-group
-              label(for="student-id") Student ID / Email
-              input#student-id(type="text" name="student_id" placeholder="e.g., ST12345 or email" required)
-            .input-group
-              label(for="student-password") Password
-              input#student-password(type="password" name="password" placeholder="••••••••" required)
-            button.btn.btn-student(type="submit") 
-              | Student Dashboard 
-              i.fa-solid.fa-arrow-right
+        .hero-image
+          img(src="/images/bus.jpeg", alt="Metropolitan University Bus")
 
+    // ==========================================
+    // 3. BUS SEARCH SECTION
+    // ==========================================
+    section.bus-search-section
+      .container
+        .search-card
+          .search-card-header
+            i.fas.fa-bus
+            h3 Find Your Bus
 
-    footer.main-footer
-      p &copy; 2026 Smart Transport Management System (STMS). Relational Database & Full-Stack Implementation.
+          form.search-form(action="#", method="POST")
+            .form-grid
+              .form-group
+                label(for="from-location") From
+                .input-wrapper
+                  select#from-location.form-control(name="from")
+                    option(value="" disabled selected) Select Starting Point
+                    option(value="sylhet-city") Sylhet City
+                    option(value="subidbazar") Subidbazar
+                    option(value="shahjalal-uposohor") Shahjalal Uposohor
+                    option(value="airport-road") Airport Road
+                    option(value="metropolitan-university") Metropolitan University
+                  i.fas.fa-map-marker-alt.input-icon
+
+              .form-group.form-swap
+                button#swapLocations.btn.btn-outline(type="button", aria-label="Swap locations")
+                  i.fas.fa-right-left
+
+              .form-group
+                label(for="to-location") To
+                .input-wrapper
+                  select#to-location.form-control(name="to")
+                    option(value="" disabled selected) Select Destination
+                    option(value="sylhet-city") Sylhet City
+                    option(value="subidbazar") Subidbazar
+                    option(value="shahjalal-uposohor") Shahjalal Uposohor
+                    option(value="airport-road") Airport Road
+                    option(value="metropolitan-university") Metropolitan University
+                  i.fas.fa-map-marker-alt.input-icon
+
+              .form-group
+                label(for="travel-date") Date
+                .input-wrapper
+                  input#travel-date.form-control(type="date", name="date")
+                  i.fas.fa-calendar-alt.input-icon
+
+              .form-group.form-submit
+                button.btn.btn-search(type="submit")
+                  i.fas.fa-search
+                  |  Search Buses
+
+          .search-card-footer
+            a.toggle-routes(href="/routes")
+              | View All Routes 
+              i.fas.fa-chevron-down
+
+    if user && user.role === 'student'
+      section.student-booking-section#student-bookings
+        .container
+          .student-booking-card
+            .student-booking-header
+              .header-title
+                i.fas.fa-user-graduate
+                h3 Student Booking Panel
+              a.btn.btn-outline(href="/logout")
+                i.fas.fa-sign-out-alt
+                |  Logout
+            p Book a ride from home and keep track of your upcoming trips.
+
+            if message
+              .alert.alert-success= message
+
+            .booking-grid
+              .booking-form-card
+                form.auth-form(action="/student-dashboard/book", method="POST")
+                  .form-group
+                    label(for="homeRouteSelect") Select Route
+                    select#homeRouteSelect.form-control(name="routeId", required)
+                      option(value="" disabled selected) Choose a route
+                      if routes && routes.length
+                        each route in routes
+                          option(value=route.id)= route.route_name + ' - ' + route.start_point + ' to ' + route.end_point
+                      else
+                        option(value="" disabled) No routes available yet
+                  .form-group
+                    label(for="homeTravelDate") Travel Date
+                    input#homeTravelDate.form-control(type="date", name="travelDate", required)
+                  .form-group
+                    label(for="homeTravelTime") Travel Time
+                    input#homeTravelTime.form-control(type="time", name="travelTime", required)
+                  button.btn.btn-login(type="submit") Book Slot
+
+              .booking-list-card
+                h4 Your Upcoming Bookings
+                if bookings && bookings.length
+                  ul.notice-list
+                    each booking in bookings
+                      li.notice-item
+                        .notice-icon
+                          i.fas.fa-calendar-check
+                        .notice-content
+                          h5= booking.route_name || 'Route'
+                          p #{booking.start_point || ''} → #{booking.end_point || ''}
+                          span.notice-date= (booking.travel_date || 'No date') + ' at ' + (booking.travel_time || 'No time')
+                else
+                  p No bookings yet.
+
+    // ==========================================
+    // 4. QUICK NAVIGATION CARDS
+    // ==========================================
+    section.quick-nav-section
+      .container
+        .grid-5-columns
+          .nav-card
+            .card-icon
+              i.fas.fa-route
+            h4 Routes & Schedules
+            p Explore all bus routes, stops and schedules.
+            a.card-link(href="/routes") View Routes #[i.fas.fa-arrow-right]
+
+          .nav-card
+            .card-icon
+              i.fas.fa-business-time
+            h4 Bus Timetable
+            p Check departure and arrival times.
+            a.card-link(href="/timetable") View Timetable #[i.fas.fa-arrow-right]
+
+          .nav-card
+            .card-icon
+              i.fas.fa-map-pin
+            h4 Our Destinations
+            p See all popular destinations we serve.
+            a.card-link(href="/routes") View Destinations #[i.fas.fa-arrow-right]
+
+          .nav-card
+            .card-icon
+              i.fas.fa-bullhorn
+            h4 Notices
+            p Stay updated with the latest announcements.
+            a.card-link(href="/notices") View Notices #[i.fas.fa-arrow-right]
+
+          .nav-card
+            .card-icon
+              i.fas.fa-headset
+            h4 Help & Support
+            p Have questions? We're here to help.
+            a.card-link(href="/contact") Get Help #[i.fas.fa-arrow-right]
+
+    // ==========================================
+    // 5. INFORMATION SECTION
+    // ==========================================
+    section.info-section
+      .container
+        .grid-3-columns
+          
+          // Popular Routes Card
+          .info-card
+            .info-card-header
+              .header-title
+                i.fas.fa-bus
+                h3 Popular Routes
+              a.view-all-link(href="/routes") View All
+
+            .route-list
+              .route-item
+                .route-badge.badge-r1 R1
+                .route-details
+                  h5 Sylhet City &rarr; Metropolitan University
+                  p Zindabazar, Chowhatta, Shibganj
+                .route-time
+                  span.time-slot Morning
+                  span.time 07:15 AM
+
+              .route-item
+                .route-badge.badge-r2 R2
+                .route-details
+                  h5 Subidbazar &rarr; Metropolitan University
+                  p Kazir Bazar, Bondor Bazar
+                .route-time
+                  span.time-slot Morning
+                  span.time 07:30 AM
+
+              .route-item
+                .route-badge.badge-r3 R3
+                .route-details
+                  h5 Shahjalal Uposohor &rarr; MU
+                  p Jetukula, Housing Estate
+                .route-time
+                  span.time-slot Morning
+                  span.time 07:00 AM
+
+              .route-item
+                .route-badge.badge-r4 R4
+                .route-details
+                  h5 Airport Road &rarr; Metropolitan University
+                  p Airport, Fenchuganj
+                .route-time
+                  span.time-slot Morning
+                  span.time 07:20 AM
+
+            .info-card-footer
+              a.btn-block-link(href="/routes") View All Routes & Schedules
+
+          // Latest Notices Card
+          .info-card
+            .info-card-header
+              .header-title
+                i.fas.fa-newspaper
+                h3 Latest Notices
+              a.view-all-link(href="/notices") View All
+
+            .notice-list
+              .notice-item
+                .notice-icon.badge-new NEW
+                .notice-content
+                  h5 Eid Holiday Transport Schedule
+                  p Special bus schedule for Eid holidays.
+                  span.notice-date May 20, 2025
+
+              .notice-item
+                .notice-icon
+                  i.fas.fa-bell
+                .notice-content
+                  h5 Semester Final Exam Notice
+                  p Check updated bus timing during final exam period.
+                  span.notice-date May 18, 2025
+
+              .notice-item
+                .notice-icon
+                  i.fas.fa-calendar-check
+                .notice-content
+                  h5 Regular Class Schedule
+                  p Regular transport service will continue as per routine.
+                  span.notice-date May 15, 2025
+
+          // About Section Card
+          .info-card.about-card
+            .info-card-header
+              .header-title
+                i.fas.fa-info-circle
+                h3 About Our Transport
+
+            .about-card-content
+              .illustration
+                img(src="images/bus-illustration.png", alt="Bus Illustration")
+              p We provide safe, comfortable and punctual transport services to make your journey to Metropolitan University, Sylhet smooth and hassle-free.
+              a.btn.btn-outline(href="/about") Learn More
+
+    // ==========================================
+    // 6. SITE FOOTER
+    // ==========================================
+    footer.site-footer
+      .container
+        .footer-top
+          .footer-col.about-col
+            .footer-logo
+              img(src="images/logo-white.png", alt="Metropolitan University, Sylhet")
+            p Committed to excellence in education and services for a better tomorrow.
+            .social-links
+              a(href="#", aria-label="Facebook"): i.fab.fa-facebook-f
+              a(href="#", aria-label="Instagram"): i.fab.fa-instagram
+              a(href="#", aria-label="YouTube"): i.fab.fa-youtube
+
+          .footer-col
+            h5 Quick Links
+            ul.footer-links
+              li: a(href="/routes") Routes & Schedules
+              li: a(href="/timetable") Bus Timetable
+              li: a(href="/notices") Notices
+              li: a(href="/about") About Us
+              li: a(href="/contact") Contact Us
+
+          .footer-col
+            h5 Information
+            ul.footer-links
+              li: a(href="/about") Why Choose Us
+              li: a(href="/routes") Transport Guidelines
+              li: a(href="/contact") FAQ
+              li: a(href="/notices") Privacy Policy
+
+          .footer-col
+            h5 Contact Us
+            ul.footer-contact
+              li
+                i.fas.fa-map-marker-alt
+                span Metropolitan University, Sylhet(br="") 
+                Battesshor ,Sylhet-3110
+              li
+                i.fas.fa-phone-alt
+                a(href="tel:+88 01313050044") +8801313050044
+              li
+                i.fas.fa-envelope
+                a(href="mailto:transport@metrouni.edu.bd") transport@metrouni.edu.bd
+              li
+                i.fas.fa-clock
+                span Sun - Thu: 7:00 AM - 7:00 PM
+
+      .footer-bottom
+        .container
+          p &copy; 2025 Metropolitan University, Sylhet. All rights reserved.
+          p Powered by MU Bus Management System
+
+    // Interactivity JavaScript
+    script.
+      document.addEventListener('DOMContentLoaded', () => {
+        const loginBtn = document.getElementById('loginBtn');
+        const loginMenu = document.getElementById('loginMenu');
+        const loginContainer = document.querySelector('.login-dropdown');
+        const swapBtn = document.getElementById('swapLocations');
+        const fromLocation = document.getElementById('from-location');
+        const toLocation = document.getElementById('to-location');
+
+        if (loginBtn && loginMenu) {
+          loginBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            loginMenu.classList.toggle('show');
+            loginContainer.classList.toggle('active');
+          });
+
+          document.addEventListener('click', (e) => {
+            if (!loginContainer.contains(e.target)) {
+              loginMenu.classList.remove('show');
+              loginContainer.classList.remove('active');
+            }
+          });
+        }
+
+        if (swapBtn && fromLocation && toLocation) {
+          swapBtn.addEventListener('click', () => {
+            const fromValue = fromLocation.value;
+            const toValue = toLocation.value;
+            fromLocation.value = toValue;
+            toLocation.value = fromValue;
+          });
+        }
+      });

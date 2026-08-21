@@ -1,0 +1,108 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{title} - STMS
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    link(rel="stylesheet", href="/stylesheet/style.css")
+  body
+    header.site-header
+      .container
+        .header-wrapper
+          .logo-container
+            a(href="/")
+              i.fa-solid.fa-bus-simple
+              span.brand-title STMS
+          nav.main-nav
+            ul.nav-list
+              li.nav-item: a.nav-link(href="/") Home
+              li.nav-item: a.nav-link(href="/routes") Routes
+              li.nav-item: a.nav-link(href="/timetable") Timetable
+              li.nav-item: a.nav-link(href="/notices") Notices
+              li.nav-item: a.nav-link(href="/about") About
+              li.nav-item: a.nav-link(href="/contact") Contact
+
+          .header-actions
+            .login-dropdown
+              button#loginBtn.btn.btn-login(type="button")
+                i.fas.fa-sign-in-alt
+                |  Login 
+                i.fas.fa-chevron-down.dropdown-icon
+              .dropdown-menu#loginMenu
+                a.dropdown-item(href="/login-student")
+                  i.fas.fa-user-graduate
+                  .item-text
+                    strong Login as Student
+                    span Access route schedules & pass
+                a.dropdown-item(href="/login-driver")
+                  i.fas.fa-id-card-clip
+                  .item-text
+                    strong Login as Driver
+                    span Manage trips & updates
+                a.dropdown-item(href="/signup")
+                  i.fas.fa-user-plus
+                  .item-text
+                    strong Sign Up
+                    span Create a new account
+    main.page-shell
+      .container
+        .auth-layout
+          .auth-card
+            .auth-badge New Account
+            h1 Create your profile
+            p Join the Smart Transport Management System to manage schedules and stay updated.
+
+            if message
+              .alert.alert-success= message
+
+            form.auth-form(action="/signup", method="POST")
+              .form-group
+                label(for="fullName") Full name
+                .input-wrapper
+                  input#fullName.form-control(type="text", name="fullName", placeholder="Enter your full name", required)
+                  i.fas.fa-user.input-icon
+
+              .form-group
+                label(for="signupEmail") Email address
+                .input-wrapper
+                  input#signupEmail.form-control(type="email", name="email", placeholder="name@metrouni.edu.bd", required)
+                  i.fas.fa-envelope.input-icon
+
+              .form-group
+                label(for="userRole") Account type
+                .input-wrapper
+                  select#userRole.form-control(name="role", required)
+                    option(value="" disabled selected) Choose your role
+                    option(value="student") Student
+                    option(value="driver") Driver
+                    option(value="admin") Admin
+                  i.fas.fa-user-tag.input-icon
+
+              .form-group
+                label(for="signupPassword") Password
+                .input-wrapper
+                  input#signupPassword.form-control(type="password", name="password", placeholder="Create a secure password", required)
+                  i.fas.fa-lock.input-icon
+
+              button.btn.btn-login(type="submit")
+                i.fas.fa-user-plus
+                |  Sign Up
+
+            .auth-footer
+              span Already have an account?
+              a(href="/login-student") Sign in here
+
+          .auth-sidebar
+            h2 Why sign up?
+            ul.auth-list
+              li
+                i.fas.fa-route
+                span View route schedules
+              li
+                i.fas.fa-bell
+                span Receive important notices
+              li
+                i.fas.fa-shield-alt
+                span Use a protected account portal

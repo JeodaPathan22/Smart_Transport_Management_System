@@ -1,0 +1,98 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{title} - STMS
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    link(rel="stylesheet", href="/stylesheet/style.css")
+  body
+    header.site-header
+      .container
+        .header-wrapper
+          .logo-container
+            a(href="/")
+              i.fa-solid.fa-bus-simple
+              span.brand-title STMS
+          nav.main-nav
+            ul.nav-list
+              li.nav-item: a.nav-link(href="/") Home
+              li.nav-item: a.nav-link(href="/routes") Routes
+              li.nav-item: a.nav-link(href="/timetable") Timetable
+              li.nav-item: a.nav-link(href="/notices") Notices
+              li.nav-item: a.nav-link(href="/about") About
+              li.nav-item: a.nav-link(href="/contact") Contact
+
+          .header-actions
+            .login-dropdown
+              button#loginBtn.btn.btn-login(type="button")
+                i.fas.fa-sign-in-alt
+                |  Login 
+                i.fas.fa-chevron-down.dropdown-icon
+              .dropdown-menu#loginMenu
+                a.dropdown-item(href="/login-student")
+                  i.fas.fa-user-graduate
+                  .item-text
+                    strong Login as Student
+                    span Access route schedules & pass
+                a.dropdown-item(href="/login-driver")
+                  i.fas.fa-id-card-clip
+                  .item-text
+                    strong Login as Driver
+                    span Manage trips & updates
+                a.dropdown-item(href="/signup")
+                  i.fas.fa-user-plus
+                  .item-text
+                    strong Sign Up
+                    span Create a new account
+    main.page-shell
+      .container
+        .auth-layout
+          .auth-card
+            .auth-badge Driver Portal
+            h1 Driver access
+            p Manage trip updates, routes and services from one secure dashboard.
+
+            if message
+              .alert.alert-success= message
+
+            form.auth-form(action="/login-driver", method="POST")
+              .form-group
+                label(for="driverEmail") Work email
+                .input-wrapper
+                  input#driverEmail.form-control(type="email", name="email", placeholder="driver@metrouni.edu.bd", required)
+                  i.fas.fa-envelope.input-icon
+
+              .form-group
+                label(for="driverPassword") Password
+                .input-wrapper
+                  input#driverPassword.form-control(type="password", name="password", placeholder="Enter your password", required)
+                  i.fas.fa-lock.input-icon
+
+              .form-options
+                label.checkbox-row
+                  input(type="checkbox", name="remember")
+                  span Keep me signed in
+                a.forgot-link(href="/signup") Sign up
+
+              button.btn.btn-login(type="submit")
+                i.fas.fa-sign-in-alt
+                |  Sign In
+
+            .auth-footer
+              span Need a driver account?
+              a(href="/signup") Create one
+
+          .auth-sidebar
+            h2 Driver tools
+            ul.auth-list
+              li
+                i.fas.fa-route
+                span Update routes and stops
+              li
+                i.fas.fa-clock
+                span Monitor timetables
+              li
+                i.fas.fa-bullhorn
+                span Share notices to riders

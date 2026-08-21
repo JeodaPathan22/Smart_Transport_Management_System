@@ -1,0 +1,48 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{title} - STMS
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    link(rel="stylesheet", href="/stylesheet/style.css")
+  body
+    header.site-header
+      .container
+        .header-wrapper
+          .logo-container
+            a(href="/")
+              i.fa-solid.fa-bus-simple
+              span.brand-title STMS
+          .header-actions
+            a.btn.btn-outline(href="/logout")
+              i.fas.fa-sign-out-alt
+              |  Logout
+
+    main.page-shell
+      .container
+        .page-card
+          h1 Driver Dashboard
+          p Welcome, your account is ready to serve the transport system.
+
+          .info-card
+            .info-card-header
+              .header-title
+                i.fas.fa-id-card
+                h3 Account Details
+            p Email: #{user.email}
+            p Name: #{user.fullName || 'Driver'}
+
+          .info-card(style="margin-top: 1.5rem")
+            .info-card-header
+              .header-title
+                i.fas.fa-route
+                h3 Assigned Route
+            if driverProfile && driverProfile.route_name
+              p Route: #{driverProfile.route_name}
+              p From: #{driverProfile.start_point}
+              p To: #{driverProfile.end_point}
+              p Schedule: #{driverProfile.schedule}
+            else
+              p No route assigned yet. Please contact the admin.

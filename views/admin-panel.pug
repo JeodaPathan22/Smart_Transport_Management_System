@@ -1,0 +1,152 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{title} - STMS
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    link(rel="stylesheet", href="/stylesheet/style.css")
+  body
+    header.site-header
+      .container
+        .header-wrapper
+          .logo-container
+            a(href="/")
+              i.fa-solid.fa-bus-simple
+              span.brand-title STMS
+          nav.main-nav
+            ul.nav-list
+              li.nav-item: a.nav-link(href="/admin-panel") Admin Panel
+          .header-actions
+            a.btn.btn-outline(href="/logout")
+              i.fas.fa-sign-out-alt
+              |  Logout
+
+    main.page-shell
+      .container
+        .page-card
+          h1 Admin Panel
+          p Manage routes, assign drivers, and maintain student accounts.
+
+          .info-grid
+            .info-card
+              .info-card-header
+                .header-title
+                  i.fas.fa-route
+                  h3 Create Route
+              form.auth-form(action="/admin-panel/route", method="POST")
+                .form-group
+                  label(for="routeName") Route Name
+                  input#routeName.form-control(type="text", name="routeName", required)
+                .form-group
+                  label(for="startPoint") Start Point
+                  input#startPoint.form-control(type="text", name="startPoint", required)
+                .form-group
+                  label(for="endPoint") End Point
+                  input#endPoint.form-control(type="text", name="endPoint", required)
+                .form-group
+                  label(for="schedule") Schedule
+                  input#schedule.form-control(type="text", name="schedule", required)
+                button.btn.btn-login(type="submit") Add Route
+
+            .info-card
+              .info-card-header
+                .header-title
+                  i.fas.fa-id-card
+                  h3 Create Driver
+              form.auth-form(action="/admin-panel/driver", method="POST")
+                .form-group
+                  label(for="driverName") Full Name
+                  input#driverName.form-control(type="text", name="fullName", required)
+                .form-group
+                  label(for="driverEmail") Email
+                  input#driverEmail.form-control(type="email", name="email", required)
+                .form-group
+                  label(for="driverPassword") Password
+                  input#driverPassword.form-control(type="password", name="password", required)
+                .form-group
+                  label(for="driverRoute") Route
+                  select#driverRoute.form-control(name="routeId")
+                    option(value="") No route yet
+                    each route in routes
+                      option(value=route.id)= route.route_name
+                button.btn.btn-login(type="submit") Add Driver
+
+            .info-card
+              .info-card-header
+                .header-title
+                  i.fas.fa-user-plus
+                  h3 Add Student
+              form.auth-form(action="/admin-panel/student", method="POST")
+                .form-group
+                  label(for="studentName") Full Name
+                  input#studentName.form-control(type="text", name="fullName", required)
+                .form-group
+                  label(for="studentEmail") Email
+                  input#studentEmail.form-control(type="email", name="email", required)
+                .form-group
+                  label(for="studentId") Student ID
+                  input#studentId.form-control(type="text", name="studentId", required)
+                .form-group
+                  label(for="studentPassword") Password
+                  input#studentPassword.form-control(type="password", name="password", required)
+                button.btn.btn-login(type="submit") Add Student
+
+          .info-card(style="margin-top: 1.5rem")
+            .info-card-header
+              .header-title
+                i.fas.fa-list
+                h3 Current Routes
+            ul.notice-list
+              each route in routes
+                li.notice-item
+                  .notice-icon
+                    i.fas.fa-route
+                  .notice-content
+                    h5= route.route_name
+                    p #{route.start_point} → #{route.end_point}
+                    span.notice-date= route.schedule
+
+          .info-card(style="margin-top: 1.5rem")
+            .info-card-header
+              .header-title
+                i.fas.fa-users
+                h3 Drivers
+            ul.notice-list
+              each driver in drivers
+                li.notice-item
+                  .notice-icon
+                    i.fas.fa-id-card
+                  .notice-content
+                    h5= driver.full_name
+                    p= driver.email
+                    if driver.route_name
+                      span.notice-date Assigned to #{driver.route_name}
+                    else
+                      span.notice-date No route assigned
+                  form(action="/admin-panel/driver/" + driver.id + "/assign-route", method="POST", style="margin-left:auto")
+                    select.form-control(name="routeId", style="min-width: 140px")
+                      option(value="") Unassign
+                      each route in routes
+                        option(value=route.id, selected=(driver.route_id === route.id))= route.route_name
+                    button.btn.btn-login(type="submit", style="margin-top: 0.5rem") Assign
+                  form(action="/admin-panel/driver/" + driver.id + "/delete", method="POST")
+                    button.btn.btn-outline(type="submit", style="margin-top: 0.5rem") Delete
+
+          .info-card(style="margin-top: 1.5rem")
+            .info-card-header
+              .header-title
+                i.fas.fa-user-graduate
+                h3 Students
+            ul.notice-list
+              each student in students
+                li.notice-item
+                  .notice-icon
+                    i.fas.fa-user-graduate
+                  .notice-content
+                    h5= student.full_name
+                    p= student.email
+                    span.notice-date ID: #{student.student_id}
+                  form(action="/admin-panel/student/" + student.id + "/delete", method="POST")
+                    button.btn.btn-outline(type="submit", style="margin-top: 0.5rem") Delete

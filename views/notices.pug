@@ -1,0 +1,87 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{title} - STMS
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    link(rel="stylesheet", href="/stylesheet/style.css")
+  body
+    header.site-header
+      .container
+        .header-wrapper
+          .logo-container
+            a(href="/")
+              i.fa-solid.fa-bus-simple
+              span.brand-title STMS
+          nav.main-nav
+            ul.nav-list
+              li.nav-item: a.nav-link(href="/") Home
+              li.nav-item: a.nav-link(href="/routes") Routes
+              li.nav-item: a.nav-link(href="/timetable") Timetable
+              li.nav-item: a.nav-link.active(href="/notices") Notices
+              li.nav-item: a.nav-link(href="/about") About
+              li.nav-item: a.nav-link(href="/contact") Contact
+
+          .header-actions
+            .login-dropdown
+              button#loginBtn.btn.btn-login(type="button")
+                i.fas.fa-sign-in-alt
+                |  Login 
+                i.fas.fa-chevron-down.dropdown-icon
+              .dropdown-menu#loginMenu
+                a.dropdown-item(href="/login-student")
+                  i.fas.fa-user-graduate
+                  .item-text
+                    strong Login as Student
+                    span Access route schedules & pass
+                a.dropdown-item(href="/login-driver")
+                  i.fas.fa-id-card-clip
+                  .item-text
+                    strong Login as Driver
+                    span Manage trips & updates
+                a.dropdown-item(href="/signup")
+                  i.fas.fa-user-plus
+                  .item-text
+                    strong Sign Up
+                    span Create a new account
+                a.dropdown-item(href="/login-admin")
+                  i.fas.fa-user-shield
+                  .item-text
+                    strong Admin Login
+                    span Manage routes and accounts
+    main.page-shell
+      .container
+        .page-card
+          h1 Notices & Announcements
+          p Stay updated with service alerts, holiday adjustments, and important transport updates.
+
+          .info-card
+            .info-card-header
+              .header-title
+                i.fas.fa-bullhorn
+                h3 Latest Updates
+            .notice-list
+              .notice-item
+                .notice-icon
+                  i.fas.fa-star
+                .notice-content
+                  h5 Eid Holiday Transport Schedule
+                  p Special bus timings will be active during the Eid holiday period.
+                  span.notice-date May 20, 2025
+              .notice-item
+                .notice-icon
+                  i.fas.fa-bell
+                .notice-content
+                  h5 Semester Final Exam Notice
+                  p Extra buses will be available during exam weeks.
+                  span.notice-date May 18, 2025
+              .notice-item
+                .notice-icon
+                  i.fas.fa-calendar-check
+                .notice-content
+                  h5 Regular Class Schedule
+                  p Services will continue as per the regular transport timetable.
+                  span.notice-date May 15, 2025
+
