@@ -9,22 +9,28 @@
   box-sizing: border-box;
 }
 
-:root {
-  /* Color Palette */
-  --primary-blue: #0056b3;
-  --hover-blue: #003d82;
-  --accent-amber: #d97706;
-  --dark-navy: #1e293b;
-  --text-dark: #334155;
-  --text-muted: #64748b;
-  --light-bg: #f8fafc;
-  --body-bg: #f1f5f9;
-  --white: #ffffff;
-  --border-color: #e2e8f0;
+:root{
+  --primary-color: #0D1B2A;    /* Midnight Navy */
+  --secondary-color: #A3B18A;  /* Sage Green */
+  --accent-color: #CDA4A4;     /* Dusty Rose */
+  --bg-color: #F6EFE3;         /* Soft Cream */
+  --text-color: #0D1B2A;       /* Dark Neutral Text */
+
+  /* Palette-linked tokens used throughout this stylesheet */
+  --primary-blue: #0D1B2A;
+  --hover-blue: #1E3A56;
+  --dark-navy: #0D1B2A;
+  --accent-amber: #CDA4A4;
+  --white: #FFFFFF;
+  --cream: #F6EFE3;
+  --light-bg: #F6EFE3;
+  --border-color: #E4DACC;
+  --text-dark: #0D1B2A;
+  --text-light: #3D4C5C;
+  --text-muted: #626B75;
 
   /* Typography */
   --font-main: 'Inter', system-ui, -apple-system, sans-serif;
-
   /* Spacing & Borders */
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -37,8 +43,8 @@
 
 body {
   font-family: var(--font-main);
-  background-color: var(--body-bg);
-  color: var(--text-dark);
+  background-color: var(--cream);
+  color: var(--text-color);
   line-height: 1.6;
 }
 
@@ -149,7 +155,7 @@ ul {
 .nav-link {
   font-weight: 600;
   font-size: 0.95rem;
-  color: var(--text-dark);
+  color: var(--text-light);
   padding: 0.4rem 0;
   position: relative;
   transition: color var(--transition-fast);
@@ -157,7 +163,7 @@ ul {
 
 .nav-link:hover,
 .nav-link.active {
-  color: var(--primary-blue);
+
 }
 
 .nav-link.active::after {
@@ -186,8 +192,8 @@ ul {
   gap: 0.75rem;
   padding: 0.6rem 0.9rem;
   border-radius: 999px;
-  background: linear-gradient(135deg, #e8f1ff 0%, #f8fbff 100%);
-  border: 1px solid #cfe0ff;
+  background: linear-gradient(135deg, #E9EBED 0%, #F6F7F8 100%);
+  border: 1px solid #D7DBDF;
   color: var(--primary-blue);
   font-weight: 700;
   cursor: pointer;
@@ -367,7 +373,7 @@ ul {
   align-items: center;
   gap: 0.4rem;
   padding: 0.35rem 0.8rem;
-  background: rgba(0, 86, 179, 0.08);
+  background: rgba(13, 27, 42, 0.08);
   color: var(--primary-blue);
   border-radius: 999px;
   font-size: 0.78rem;
@@ -471,7 +477,7 @@ ul {
    3. HERO BANNER
    ========================================== */
 .hero-banner {
-  background: linear-gradient(135deg, #0056b3 0%, #002e63 100%);
+  background: linear-gradient(135deg, #1E3A56 0%, #0D1B2A 100%);
   color: var(--white);
   padding: 4rem 0 5rem;
 }
@@ -731,7 +737,7 @@ ul {
 .card-icon {
   width: 45px;
   height: 45px;
-  background-color: #e6f0fa;
+  background-color: #E7E8EA;
   color: var(--primary-blue);
   border-radius: 50%;
   display: flex;
@@ -971,7 +977,7 @@ ul {
    ========================================== */
 .site-footer {
   background-color: var(--dark-navy);
-  color: #94a3b8;
+  color: #ADA9A0;
   padding: 4rem 0 0;
 }
 
@@ -980,7 +986,7 @@ ul {
   grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
   gap: 2rem;
   padding-bottom: 3rem;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid #1E3A56;
 }
 
 .footer-logo img {
@@ -1001,7 +1007,7 @@ ul {
 .social-links a {
   width: 32px;
   height: 32px;
-  background-color: #334155;
+  background-color: #1E3A56;
   color: var(--white);
   border-radius: 50%;
   display: flex;
@@ -1192,7 +1198,7 @@ ul {
 .badge-inactive { background: #f1f2f4; color: #52565c; }
 .badge-suspended { background: #fdecec; color: #a12626; }
 
-.badge-regular { background: #e6f0ff; color: var(--primary-blue); }
+.badge-regular { background: #E7E8EA; color: var(--primary-blue); }
 .badge-examination { background: #fdecec; color: #a12626; }
 .badge-summer { background: #fff4e0; color: #9a5b00; }
 .badge-winter { background: #e6f6fb; color: #0d6b86; }
@@ -1201,12 +1207,12 @@ ul {
 /* Student Dashboard bus status + notice type badges (see the Status
    Logic section of README.md for what each one means). */
 .badge-on_time { background: #e8f7ed; color: #0e6f34; }
-.badge-upcoming { background: #e6f0ff; color: var(--primary-blue); }
+.badge-upcoming { background: #E7E8EA; color: var(--primary-blue); }
 .badge-departed { background: #f1f2f4; color: #52565c; }
 .badge-delayed { background: #fff4e0; color: #9a5b00; }
 .badge-breakdown { background: #fdecec; color: #a12626; }
 .badge-not_running { background: #2b2f36; color: #ffffff; }
-.badge-general { background: #e6f0ff; color: var(--primary-blue); }
+.badge-general { background: #E7E8EA; color: var(--primary-blue); }
 
 /* ==========================================
    13. ADMIN / DASHBOARD LAYOUT
@@ -1250,7 +1256,7 @@ ul {
   height: 44px;
   flex-shrink: 0;
   border-radius: 12px;
-  background: rgba(0, 86, 179, 0.1);
+  background: rgba(13, 27, 42, 0.1);
   color: var(--primary-blue);
   display: flex;
   align-items: center;
