@@ -1,0 +1,660 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var panelTitle = 'Admin Panel'
+    include partials/dashboard-header.pug
+    include partials/mixins.pug
+
+    main.dashboard-shell
+      .container
+        .dashboard-intro
+          h1 Admin Panel
+          p Manage students, drivers, buses, routes, stops, schedules and notices for the whole transport system.
+
+        include partials/flash.pug
+
+        .stat-grid
+          .stat-card
+            .stat-icon: i.fas.fa-user-graduate
+            div
+              .stat-value= stats.totalStudents
+              .stat-label Total Students
+          .stat-card
+            .stat-icon: i.fas.fa-hourglass-half
+            div
+              .stat-value= stats.pendingStudents
+              .stat-label Pending Registrations
+          .stat-card
+            .stat-icon: i.fas.fa-id-card
+            div
+              .stat-value= stats.totalDrivers
+              .stat-label Total Drivers
+          .stat-card
+            .stat-icon: i.fas.fa-bus
+            div
+              .stat-value= stats.totalBuses
+              .stat-label Total Buses
+          .stat-card
+            .stat-icon: i.fas.fa-route
+            div
+              .stat-value= stats.totalRoutes
+              .stat-label Total Routes
+          .stat-card
+            .stat-icon: i.fas.fa-map-pin
+            div
+              .stat-value= stats.totalStops
+              .stat-label Total Stops
+          .stat-card
+            .stat-icon: i.fas.fa-calendar-check
+            div
+              .stat-value= stats.activeSchedules
+              .stat-label Active Schedules
+          .stat-card
+            .stat-icon: i.fas.fa-bullhorn
+            div
+              .stat-value= stats.totalNotices
+              .stat-label Recent Notices
+          .stat-card
+            .stat-icon: i.fas.fa-triangle-exclamation
+            div
+              .stat-value= stats.breakdownReports
+              .stat-label Breakdown Reports
+
+        .tab-nav
+          a.tab-link(href="/admin-panel?tab=overview", class=(tab === 'overview' ? 'active' : '')) Overview
+          a.tab-link(href="/admin-panel?tab=students", class=(tab === 'students' ? 'active' : '')) Student Management
+          a.tab-link(href="/admin-panel?tab=drivers", class=(tab === 'drivers' ? 'active' : '')) Driver Management
+          a.tab-link(href="/admin-panel?tab=buses", class=(tab === 'buses' ? 'active' : '')) Bus Management
+          a.tab-link(href="/admin-panel?tab=routes", class=(tab === 'routes' ? 'active' : '')) Route Management
+          a.tab-link(href="/admin-panel?tab=stops", class=(tab === 'stops' ? 'active' : '')) Stop Management
+          a.tab-link(href="/admin-panel?tab=schedules", class=(tab === 'schedules' ? 'active' : '')) Schedule Management
+          a.tab-link(href="/admin-panel?tab=notices", class=(tab === 'notices' ? 'active' : '')) Notice Management
+          a.tab-link(href="/admin-panel?tab=trips", class=(tab === 'trips' ? 'active' : '')) Live Trips & Breakdowns
+
+        //- ============================= OVERVIEW =============================
+        if tab === 'overview'
+          .section-block
+            .section-block-header
+              h3 Recent Notices
+            if notices && notices.length
+              .table-wrap
+                table.data-table
+                  thead
+                    tr
+                      th Posted By
+                      th Bus / Route
+                      th Type
+                      th Message
+                      th Posted
+                  tbody
+                    each n in notices
+                      tr
+                        td= n.posted_by
+                        td= n.bus_name || n.bus_number || n.route_name || '—'
+                        td: +statusBadge(n.notice_type)
+                        td= n.message
+                        td.muted= formatDateTimeHuman(n.created_at)
+            else
+              .empty-state No notices posted yet.
+          .section-block
+            .future-feature-card
+              i.fas.fa-satellite-dish
+              span Google API / GPS live-tracking integration is reserved in the architecture (see config/googleApi.js) but stays inactive until real GPS hardware is installed on university buses. No fake location or ETA data is generated anywhere in this app.
+
+        //- ============================= STUDENTS =============================
+        if tab === 'students'
+          - var pendingStudents = students.filter(function(s){ return s.status === 'pending'; })
+          .section-block
+            h3 Pending Registrations
+            p.section-desc Students who registered themselves and are waiting for review. Approve to grant dashboard access, or reject to deny it.
+            if pendingStudents.length
+              .table-wrap
+                table.data-table
+                  thead
+                    tr
+                      th Name
+                      th Email
+                      th Student ID
+                      th Department
+                      th Phone
+                      th Registered
+                      th Actions
+                  tbody
+                    each s in pendingStudents
+                      tr
+                        td= s.full_name
+                        td= s.email
+                        td= s.student_id
+                        td= s.department || '—'
+                        td= s.phone || '—'
+                        td.muted= formatDateTimeHuman(s.created_at)
+                        td
+                          .table-actions
+                            form(action='/admin/students/' + s.id + '/approve', method='POST')
+                              button.btn.btn-sm.btn-success(type='submit') Approve
+                            form(action='/admin/students/' + s.id + '/reject', method='POST')
+                              button.btn.btn-sm.btn-danger(type='submit') Reject
+            else
+              .empty-state No pending registrations right now.
+
+          .section-block
+            h3 Add Student
+            p.section-desc Directly create a student account. Admin-created students are approved immediately.
+            form.auth-form(action="/admin/students", method="POST")
+              .form-row
+                .form-group
+                  label(for="studentName") Full Name
+                  input#studentName.form-control(type="text", name="fullName", required)
+                .form-group
+                  label(for="studentEmail2") Email
+                  input#studentEmail2.form-control(type="email", name="email", required)
+                .form-group
+                  label(for="studentIdField") Student ID
+                  input#studentIdField.form-control(type="text", name="studentId", required)
+              .form-row
+                .form-group
+                  label(for="studentDept") Department
+                  input#studentDept.form-control(type="text", name="department")
+                .form-group
+                  label(for="studentPhone") Phone
+                  input#studentPhone.form-control(type="tel", name="phone")
+                .form-group
+                  label(for="studentPassword2") Password
+                  input#studentPassword2.form-control(type="password", name="password", required)
+              button.btn.btn-login(type="submit") Add Student
+
+          .section-block
+            h3 All Students
+            if students.length
+              .table-wrap
+                table.data-table
+                  thead
+                    tr
+                      th Name
+                      th Email
+                      th Student ID
+                      th Department
+                      th Status
+                      th Actions
+                  tbody
+                    each s in students
+                      tr
+                        td= s.full_name
+                        td= s.email
+                        td= s.student_id
+                        td= s.department || '—'
+                        td: +statusBadge(s.status)
+                        td
+                          .table-actions
+                            a.btn.btn-sm.btn-outline(href='/admin/students/' + s.id + '/edit') Edit
+                            if s.status === 'suspended'
+                              form(action='/admin/students/' + s.id + '/activate', method='POST')
+                                button.btn.btn-sm.btn-success(type='submit') Re-activate
+                            else if s.status === 'approved'
+                              form(action='/admin/students/' + s.id + '/suspend', method='POST')
+                                button.btn.btn-sm.btn-muted(type='submit') Suspend
+                            form(action='/admin/students/' + s.id + '/delete', method='POST', data-confirm='Delete this student account? This cannot be undone.')
+                              button.btn.btn-sm.btn-danger(type='submit') Delete
+            else
+              .empty-state No students yet.
+
+        //- ============================= DRIVERS =============================
+        if tab === 'drivers'
+          .section-block
+            h3 Add Driver
+            p.section-desc Driver accounts can only be created here by the Admin - there is no public driver signup.
+            form.auth-form(action="/admin/drivers", method="POST")
+              .form-row
+                .form-group
+                  label(for="driverName") Full Name
+                  input#driverName.form-control(type="text", name="fullName", required)
+                .form-group
+                  label(for="driverEmail") Email
+                  input#driverEmail.form-control(type="email", name="email", required)
+                .form-group
+                  label(for="driverPhone") Phone
+                  input#driverPhone.form-control(type="tel", name="phone")
+              .form-row
+                .form-group
+                  label(for="driverPassword") Password
+                  input#driverPassword.form-control(type="password", name="password", required)
+                .form-group
+                  label(for="driverBus") Assign Bus (optional)
+                  select#driverBus.form-control(name="busId")
+                    option(value="") No bus yet
+                    each bus in buses
+                      option(value=bus.id)= bus.bus_number + (bus.bus_name ? ' - ' + bus.bus_name : '')
+              button.btn.btn-login(type="submit") Add Driver
+
+          .section-block
+            h3 Drivers
+            if drivers.length
+              .table-wrap
+                table.data-table
+                  thead
+                    tr
+                      th Name
+                      th Email
+                      th Phone
+                      th Assign Bus
+                      th Assigned Route
+                      th Status
+                      th Actions
+                  tbody
+                    each d in drivers
+                      tr
+                        td= d.full_name
+                        td= d.email
+                        td= d.phone || '—'
+                        td
+                          form(action='/admin/drivers/' + d.id + '/assign', method='POST', style="display:flex; gap:0.4rem; align-items:center;")
+                            select.form-control.btn-sm(name="busId", style="min-width:120px;", onchange="this.form.submit()")
+                              option(value="", selected=(!d.bus_id)) Unassigned
+                              each bus in buses
+                                option(value=bus.id, selected=(d.bus_id === bus.id))= bus.bus_number
+                        td= d.route_name || '—'
+                        td: +statusBadge(d.status)
+                        td
+                          .table-actions
+                            a.btn.btn-sm.btn-outline(href='/admin/drivers/' + d.id + '/edit') Edit
+                            if d.status === 'active'
+                              form(action='/admin/drivers/' + d.id + '/deactivate', method='POST')
+                                button.btn.btn-sm.btn-muted(type='submit') Deactivate
+                            else
+                              form(action='/admin/drivers/' + d.id + '/activate', method='POST')
+                                button.btn.btn-sm.btn-success(type='submit') Activate
+                            form(action='/admin/drivers/' + d.id + '/delete', method='POST', data-confirm='Delete this driver account? This cannot be undone.')
+                              button.btn.btn-sm.btn-danger(type='submit') Delete
+            else
+              .empty-state No drivers yet.
+
+        //- ============================= BUSES =============================
+        if tab === 'buses'
+          .section-block
+            h3 Add Bus
+            form.auth-form(action="/admin/buses", method="POST")
+              .form-row
+                .form-group
+                  label(for="busNumber") Bus Number
+                  input#busNumber.form-control(type="text", name="busNumber", placeholder="e.g. 11-0018", required)
+                .form-group
+                  label(for="busName") Bus Name (optional)
+                  input#busName.form-control(type="text", name="busName")
+                .form-group
+                  label(for="busCapacity") Capacity (optional)
+                  input#busCapacity.form-control(type="number", name="capacity", min="1")
+              .form-row
+                .form-group
+                  label(for="busRoute") Assigned Route (optional)
+                  select#busRoute.form-control(name="routeId")
+                    option(value="") No route yet
+                    each route in routes
+                      option(value=route.id)= route.route_name
+                .form-group
+                  label(for="busStatus") Status
+                  select#busStatus.form-control(name="status")
+                    option(value="active") Active
+                    option(value="inactive") Inactive
+              button.btn.btn-login(type="submit") Add Bus
+
+          .section-block
+            h3 Buses
+            if buses.length
+              .table-wrap
+                table.data-table
+                  thead
+                    tr
+                      th Bus Number
+                      th Name
+                      th Capacity
+                      th Assigned Route
+                      th Assigned Driver
+                      th Status
+                      th Actions
+                  tbody
+                    each b in buses
+                      tr
+                        td= b.bus_number
+                        td= b.bus_name || '—'
+                        td= b.capacity || '—'
+                        td= b.route_name || '—'
+                        td= b.driver_name || '—'
+                        td: +statusBadge(b.status)
+                        td
+                          .table-actions
+                            a.btn.btn-sm.btn-outline(href='/admin/buses/' + b.id + '/edit') Edit
+                            form(action='/admin/buses/' + b.id + '/delete', method='POST', data-confirm='Delete this bus? Its schedules will also be removed.')
+                              button.btn.btn-sm.btn-danger(type='submit') Delete
+            else
+              .empty-state No buses yet.
+
+        //- ============================= ROUTES =============================
+        if tab === 'routes'
+          .section-block
+            h3 Add Route
+            form.auth-form(action="/admin/routes", method="POST")
+              .form-row
+                .form-group
+                  label(for="routeName") Route Name
+                  input#routeName.form-control(type="text", name="routeName", required)
+                .form-group
+                  label(for="routeStatus") Status
+                  select#routeStatus.form-control(name="status")
+                    option(value="active") Active
+                    option(value="inactive") Inactive
+              .form-group
+                label(for="routeDescription") Description (optional)
+                textarea#routeDescription.form-control(name="description", rows="2")
+              button.btn.btn-login(type="submit") Add Route
+
+          .section-block
+            h3 Routes
+            p.section-desc Schedule changes (regular/examination/summer/etc.) attach to the same route - they never create a duplicate route.
+            if routes.length
+              .table-wrap
+                table.data-table
+                  thead
+                    tr
+                      th Route Name
+                      th Description
+                      th Stops
+                      th Status
+                      th Actions
+                  tbody
+                    each r in routes
+                      tr
+                        td= r.route_name
+                        td.muted= r.description || '—'
+                        td= r.stop_count
+                        td: +statusBadge(r.status)
+                        td
+                          .table-actions
+                            a.btn.btn-sm.btn-outline(href='/admin/routes/' + r.id + '/edit') Edit / Stops
+                            form(action='/admin/routes/' + r.id + '/delete', method='POST', data-confirm='Delete this route? Its stops and schedules will also be removed.')
+                              button.btn.btn-sm.btn-danger(type='submit') Delete
+            else
+              .empty-state No routes yet.
+
+        //- ============================= STOPS =============================
+        if tab === 'stops'
+          .section-block
+            h3 Add Stop
+            form.auth-form(action="/admin/stops", method="POST")
+              .form-row
+                .form-group
+                  label(for="stopRoute") Route
+                  select#stopRoute.form-control(name="routeId", required)
+                    option(value="" disabled selected) Choose a route
+                    each route in routes
+                      option(value=route.id)= route.route_name
+                .form-group
+                  label(for="stopName") Stop Name
+                  input#stopName.form-control(type="text", name="stopName", required)
+              .form-row
+                .form-group
+                  label(for="stopOrder") Order (optional - auto-numbered if left blank)
+                  input#stopOrder.form-control(type="number", name="stopOrder", min="1")
+                .form-group
+                  label(for="stopStatus") Status
+                  select#stopStatus.form-control(name="status")
+                    option(value="active") Active
+                    option(value="inactive") Inactive
+              button.btn.btn-login(type="submit") Add Stop
+
+          .section-block
+            h3 Stops
+            p.section-desc Stops are shown in Order for each route so students always see the correct sequence.
+            if stops.length
+              .table-wrap
+                table.data-table
+                  thead
+                    tr
+                      th Route
+                      th Order
+                      th Stop Name
+                      th Status
+                      th Actions
+                  tbody
+                    each s in stops
+                      tr
+                        td= s.route_name
+                        td= s.stop_order
+                        td= s.stop_name
+                        td: +statusBadge(s.status)
+                        td
+                          .table-actions
+                            a.btn.btn-sm.btn-outline(href='/admin/stops/' + s.id + '/edit') Edit
+                            form(action='/admin/stops/' + s.id + '/delete', method='POST', data-confirm='Delete this stop?')
+                              button.btn.btn-sm.btn-danger(type='submit') Delete
+            else
+              .empty-state No stops yet.
+
+        //- ============================= SCHEDULES =============================
+        if tab === 'schedules'
+          .section-block
+            h3 Add Schedule
+            p.section-desc This is the single source of truth for bus timings - students see whatever is saved here, instantly, with no code changes.
+            form.auth-form(action="/admin/schedules", method="POST")
+              .form-row
+                .form-group
+                  label(for="scheduleBus") Bus
+                  select#scheduleBus.form-control(name="busId", required)
+                    option(value="" disabled selected) Choose a bus
+                    each bus in buses
+                      option(value=bus.id)= bus.bus_number + (bus.bus_name ? ' - ' + bus.bus_name : '')
+                .form-group
+                  label(for="scheduleRoute") Route
+                  select#scheduleRoute.form-control(name="routeId", required)
+                    option(value="" disabled selected) Choose a route
+                    each route in routes
+                      option(value=route.id)= route.route_name
+                .form-group
+                  label(for="schedulePeriod") Schedule Period
+                  select#schedulePeriod.form-control(name="period")
+                    each p in periods
+                      option(value=p)= titleCase(p)
+              .form-row
+                .form-group
+                  label(for="scheduleArrival") Arrival Time (to Campus)
+                  input#scheduleArrival.form-control(type="time", name="arrivalTime")
+                .form-group
+                  label(for="scheduleDeparture") Departure Time (from Campus)
+                  input#scheduleDeparture.form-control(type="time", name="departureTime")
+                .form-group
+                  label(for="scheduleDays") Operating Days
+                  input#scheduleDays.form-control(type="text", name="operatingDays", value="Sun-Thu")
+              .form-row
+                .form-group
+                  label(for="scheduleFrom") Effective From
+                  input#scheduleFrom.form-control(type="date", name="effectiveFrom")
+                .form-group
+                  label(for="scheduleTo") Effective To (optional)
+                  input#scheduleTo.form-control(type="date", name="effectiveTo")
+                .form-group
+                  label(for="scheduleStatus") Status
+                  select#scheduleStatus.form-control(name="status")
+                    option(value="active") Active
+                    option(value="inactive") Inactive
+              .form-group
+                label(for="scheduleNotes") Notes (optional)
+                input#scheduleNotes.form-control(type="text", name="notes", placeholder="e.g. Teacher transport")
+              button.btn.btn-login(type="submit") Add Schedule
+
+          .section-block
+            h3 Schedules
+            if schedules.length
+              .table-wrap
+                table.data-table
+                  thead
+                    tr
+                      th Route
+                      th Bus
+                      th Arrival
+                      th Departure
+                      th Days
+                      th Period
+                      th Effective From
+                      th Status
+                      th Actions
+                  tbody
+                    each s in schedules
+                      tr
+                        td= s.route_name
+                        td= s.bus_number
+                        td= s.arrival_time ? formatTime12h(s.arrival_time) : '—'
+                        td= s.departure_time ? formatTime12h(s.departure_time) : '—'
+                        td= s.operating_days
+                        td: +periodBadge(s.period)
+                        td.muted= s.effective_from ? formatDateHuman(s.effective_from) : '—'
+                        td: +statusBadge(s.status)
+                        td
+                          .table-actions
+                            a.btn.btn-sm.btn-outline(href='/admin/schedules/' + s.id + '/edit') Edit
+                            form(action='/admin/schedules/' + s.id + '/delete', method='POST', data-confirm='Delete this schedule entry?')
+                              button.btn.btn-sm.btn-danger(type='submit') Delete
+            else
+              .empty-state No schedules yet.
+
+        //- ============================= NOTICES =============================
+        if tab === 'notices'
+          .section-block
+            h3 Create Admin Notice
+            p.section-desc Post an official transport notice - for example a bus that will not run today, or a route-wide service change. Leave Bus blank to apply to the whole Route instead.
+            form.auth-form(action="/admin/notices", method="POST")
+              .form-row
+                .form-group
+                  label(for="noticeBus") Bus (optional)
+                  select#noticeBus.form-control(name="busId")
+                    option(value="") No specific bus (route-wide)
+                    each bus in buses
+                      option(value=bus.id)= bus.bus_number + (bus.bus_name ? ' - ' + bus.bus_name : '')
+                .form-group
+                  label(for="noticeRoute") Route (optional)
+                  select#noticeRoute.form-control(name="routeId")
+                    option(value="") Not route-specific
+                    each route in routes
+                      option(value=route.id)= route.route_name
+              .form-row
+                .form-group
+                  label(for="noticeDate") Date
+                  input#noticeDate.form-control(type="date", name="noticeDate", value=todayStr, required)
+                .form-group
+                  label(for="noticeType") Notice Type / Status
+                  select#noticeType.form-control(name="noticeType")
+                    option(value="not_running") Not Running (bus/route will not run on this date)
+                    option(value="general") General Notice (informational only)
+              .form-group
+                label(for="noticeMessage") Message
+                input#noticeMessage.form-control(type="text", name="message", placeholder="e.g. Bus 11-0018 will not run today.", maxlength="500", required)
+              button.btn.btn-login(type="submit") Post Notice
+
+          .section-block
+            h3 All Notices
+            p.section-desc Every notice currently on file - Admin notices and Driver delay/breakdown reports together. Admins can remove any notice; deleting one is informational cleanup only and never changes the official schedule.
+            if allNotices.length
+              .table-wrap
+                table.data-table
+                  thead
+                    tr
+                      th Posted By
+                      th Bus / Route
+                      th Type
+                      th Message
+                      th Date
+                      th Posted
+                      th Actions
+                  tbody
+                    each n in allNotices
+                      tr
+                        td= n.posted_by
+                        td= n.bus_name || n.bus_number || n.route_name || '—'
+                        td: +statusBadge(n.notice_type)
+                        td= n.message
+                        td.muted= n.notice_date ? formatDateHuman(n.notice_date) : '—'
+                        td.muted= formatDateTimeHuman(n.created_at)
+                        td
+                          form(action='/admin/notices/' + n.id + '/delete', method='POST', data-confirm='Delete this notice?')
+                            button.btn.btn-sm.btn-danger(type='submit') Delete
+            else
+              .empty-state No notices posted yet.
+
+        //- ============================= TRIPS =============================
+        if tab === 'trips'
+          - var liveTrips = trips.filter(function(t){ return t.status === 'in_progress'; })
+          - var breakdownTrips = trips.filter(function(t){ return t.status === 'breakdown'; })
+
+          .section-block
+            h3 Currently Active Trips
+            p.section-desc Live view of buses on the road right now.
+            if liveTrips.length
+              .table-wrap
+                table.data-table
+                  thead
+                    tr
+                      th Bus
+                      th Route
+                      th Driver
+                      th Started
+                  tbody
+                    each t in liveTrips
+                      tr
+                        td= t.bus_number
+                        td= t.route_name || '—'
+                        td= t.driver_name
+                        td.muted= formatDateTimeHuman(t.started_at)
+            else
+              .empty-state No trips are currently in progress.
+
+          .section-block
+            h3 Breakdown Reports
+            p.section-desc Trips reported by drivers as broken down, most recent first.
+            if breakdownTrips.length
+              .table-wrap
+                table.data-table
+                  thead
+                    tr
+                      th Bus
+                      th Route
+                      th Driver
+                      th Message
+                      th Reported
+                  tbody
+                    each t in breakdownTrips
+                      tr
+                        td= t.bus_number
+                        td= t.route_name || '—'
+                        td= t.driver_name
+                        td= t.breakdown_message || '—'
+                        td.muted= formatDateTimeHuman(t.breakdown_reported_at)
+            else
+              .empty-state No breakdown reports.
+
+          .section-block
+            h3 Recent Trip History
+            p.section-desc All trips - active, completed and breakdown - most recent first.
+            if trips.length
+              .table-wrap
+                table.data-table
+                  thead
+                    tr
+                      th Bus
+                      th Route
+                      th Driver
+                      th Status
+                      th Started
+                      th Ended
+                  tbody
+                    each t in trips
+                      tr
+                        td= t.bus_number
+                        td= t.route_name || '—'
+                        td= t.driver_name
+                        td: +tripStatusBadge(t.status)
+                        td.muted= t.started_at ? formatDateTimeHuman(t.started_at) : '—'
+                        td.muted= t.ended_at ? formatDateTimeHuman(t.ended_at) : '—'
+            else
+              .empty-state No trips recorded yet.
+
+    script(src="/javascripts/main.js")

@@ -1,0 +1,209 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var active = 'home'
+    include partials/header.pug
+    include partials/mixins.pug
+
+    // ==========================================
+    // HERO BANNER SECTION
+    // ==========================================
+    section.hero-banner
+      .container
+        .hero-content
+          h1 Your Journey. #[br] Our Responsibility.
+          p Safe, reliable and comfortable transport services for the Metropolitan University community.
+
+          .hero-features
+            .feature-item
+              i.fas.fa-shield-alt
+              span Safe & Secure
+            .feature-item
+              i.fas.fa-clock
+              span On Time
+            .feature-item
+              i.fas.fa-users
+              span For Everyone
+
+        .hero-image
+          img(src="/images/bus.jpeg", alt="Metropolitan University Bus")
+
+    // ==========================================
+    // FIND YOUR BUS SECTION
+    // ==========================================
+    section.bus-search-section
+      .container
+        .search-card
+          .search-card-header
+            i.fas.fa-bus
+            h3 Find Your Bus
+
+          form.search-form(action="/", method="GET")
+            .form-grid-simple
+              .form-group
+                label(for="stopSelect") Your Stop
+                .input-wrapper
+                  select#stopSelect.form-control(name="stop", required)
+                    option(value="", disabled=true, selected=!selectedStop) Select your stop
+                    each s in stopOptions
+                      option(value=s, selected=(s === selectedStop))= s
+                  i.fas.fa-map-marker-alt.input-icon
+
+              .form-group
+                label(for="directionSelect") Direction
+                .input-wrapper
+                  select#directionSelect.form-control(name="direction")
+                    option(value="to_campus", selected=(direction === 'to_campus')) To Campus
+                    option(value="from_campus", selected=(direction === 'from_campus')) From Campus
+                  i.fas.fa-right-left.input-icon
+
+              button.btn.btn-search(type="submit")
+                i.fas.fa-search
+                |  Search Buses
+
+          if busSearchResults !== null
+            .bus-result-list
+              if busSearchResults.length
+                each r in busSearchResults
+                  - var busBadgeClass = 'badge-approved'
+                  case r.status.code
+                    when 'delayed'
+                      - busBadgeClass = 'badge-suspended'
+                    when 'passed'
+                      - busBadgeClass = 'badge-inactive'
+                    when 'arriving_soon'
+                      - busBadgeClass = 'badge-winter'
+                    when 'unknown'
+                      - busBadgeClass = 'badge-pending'
+                  .bus-result-card
+                    .bus-result-main
+                      h4 Bus #{r.bus_number} - #{selectedStop}
+                      p= r.route_name
+                    .bus-result-meta
+                      .bus-result-time
+                        span.time-slot= direction === 'from_campus' ? 'Departure' : 'Arrival'
+                        span.time= formatTime12h(direction === 'from_campus' ? r.departure_time : r.arrival_time)
+                      span.badge(class=busBadgeClass)= r.status.label
+                    if r.status.estimatedTime
+                      p.bus-result-notice Estimated Arrival: #{formatTime12h(r.status.estimatedTime)}
+                    if r.status.detail
+                      p.bus-result-notice= r.status.detail
+                    if r.status.message
+                      p.bus-result-notice Driver update: #{r.status.message}
+              else
+                p(style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;") No buses found for "#{selectedStop}" right now. Try a different stop, or check the #[a(href="/timetable") full Timetable].
+
+          .search-card-footer
+            a.toggle-routes(href="/routes")
+              | View All Routes
+              i.fas.fa-chevron-down
+
+    // ==========================================
+    // QUICK NAVIGATION CARDS
+    // ==========================================
+    section.quick-nav-section
+      .container
+        .grid-5-columns
+          .nav-card
+            .card-icon
+              i.fas.fa-route
+            h4 Routes & Stops
+            p Explore all bus routes and ordered stop sequences.
+            a.card-link(href="/routes") View Routes #[i.fas.fa-arrow-right]
+
+          .nav-card
+            .card-icon
+              i.fas.fa-business-time
+            h4 Bus Timetable
+            p Check official, admin-managed departure and arrival times.
+            a.card-link(href="/timetable") View Timetable #[i.fas.fa-arrow-right]
+
+          .nav-card
+            .card-icon
+              i.fas.fa-map-pin
+            h4 Our Destinations
+            p See all stops and locations we serve.
+            a.card-link(href="/routes") View Destinations #[i.fas.fa-arrow-right]
+
+          .nav-card
+            .card-icon
+              i.fas.fa-bullhorn
+            h4 Notices
+            p Stay updated with driver-posted delay notices.
+            a.card-link(href="/notices") View Notices #[i.fas.fa-arrow-right]
+
+          .nav-card
+            .card-icon
+              i.fas.fa-headset
+            h4 Help & Support
+            p Have questions? We're here to help.
+            a.card-link(href="/contact") Get Help #[i.fas.fa-arrow-right]
+
+    // ==========================================
+    // INFORMATION SECTION (dynamic - database-driven)
+    // ==========================================
+    section.info-section
+      .container
+        .grid-3-columns
+
+          // Popular Routes Card
+          .info-card
+            .info-card-header
+              .header-title
+                i.fas.fa-bus
+                h3 Popular Routes
+              a.view-all-link(href="/routes") View All
+
+            .route-list
+              if popularRoutes && popularRoutes.length
+                each route, i in popularRoutes
+                  .route-item
+                    .route-badge= 'R' + (i + 1)
+                    .route-details
+                      h5= route.route_name
+                    if route.arrival_time || route.departure_time
+                      .route-time
+                        span.time-slot= route.arrival_time ? 'Arrival' : 'Departure'
+                        span.time= formatTime12h(route.arrival_time || route.departure_time)
+              else
+                p.muted No routes published yet.
+
+            .info-card-footer
+              a.btn-block-link(href="/routes") View All Routes & Schedules
+
+          // Latest Notices Card
+          .info-card
+            .info-card-header
+              .header-title
+                i.fas.fa-newspaper
+                h3 Latest Notices
+              a.view-all-link(href="/notices") View All
+
+            .notice-list
+              if latestNotices && latestNotices.length
+                each n in latestNotices
+                  .notice-item
+                    .notice-icon
+                      i.fas.fa-bus
+                    .notice-content
+                      h5= n.posted_by + ' - ' + (n.bus_name || n.bus_number || n.route_name || 'General')
+                      +statusBadge(n.notice_type)
+                      p= n.message
+                      span.notice-date= formatDateTimeHuman(n.created_at)
+              else
+                p.muted No notices posted yet.
+
+          // About Section Card
+          .info-card.about-card
+            .info-card-header
+              .header-title
+                i.fas.fa-info-circle
+                h3 About Our Transport
+
+            .about-card-content
+              p We provide safe, comfortable and punctual transport services to make your journey to Metropolitan University, Sylhet smooth and hassle-free. Every schedule shown across this site comes directly from the Admin Panel's database - never hard-coded.
+              a.btn.btn-outline(href="/about") Learn More
+
+    include partials/footer.pug

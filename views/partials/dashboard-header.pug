@@ -1,0 +1,17 @@
+header.site-header
+  .container
+    .header-wrapper
+      .logo-container
+        a(href="/")
+          i.fa-solid.fa-bus-simple
+          span.brand-title STMS
+      nav.main-nav
+        ul.nav-list
+          li.nav-item: span.nav-link.active= panelTitle
+      .header-actions
+        a.btn.btn-outline(href="/", style="margin-right:0.6rem")
+          i.fas.fa-house
+          |  Site
+        a.btn.btn-outline(href="/logout")
+          i.fas.fa-sign-out-alt
+          |  Logout

@@ -1,0 +1,16 @@
+mixin statusBadge(status)
+  span.badge(class='badge-' + status)= titleCase(status)
+
+mixin periodBadge(period)
+  span.badge(class='badge-' + period)= titleCase(period)
+
+mixin tripStatusBadge(status)
+  case status
+    when 'in_progress'
+      span.badge.badge-active In Progress
+    when 'completed'
+      span.badge.badge-inactive Completed
+    when 'breakdown'
+      span.badge.badge-suspended Breakdown
+    default
+      span.badge.badge-pending= titleCase(status)

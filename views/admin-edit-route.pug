@@ -1,0 +1,73 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var panelTitle = 'Admin Panel'
+    include partials/dashboard-header.pug
+    include partials/mixins.pug
+
+    main.dashboard-shell
+      .container
+        a.btn.btn-outline.btn-sm(href="/admin-panel?tab=routes", style="margin-bottom:1rem;")
+          i.fas.fa-arrow-left
+          |  Back to Route Management
+
+        include partials/flash.pug
+
+        .section-block(style="max-width: 640px;")
+          h3 Edit Route
+          form.auth-form(action='/admin/routes/' + route.id + '/update', method="POST")
+            .form-row
+              .form-group
+                label(for="routeName") Route Name
+                input#routeName.form-control(type="text", name="routeName", value=route.route_name, required)
+              .form-group
+                label(for="status") Status
+                select#status.form-control(name="status")
+                  option(value="active", selected=(route.status === 'active')) Active
+                  option(value="inactive", selected=(route.status === 'inactive')) Inactive
+            .form-group
+              label(for="description") Description
+              textarea#description.form-control(name="description", rows="2")= route.description
+            button.btn.btn-login(type="submit") Save Changes
+
+        .section-block
+          h3 Stops on this Route
+          p.section-desc Stops are shown to students in this order.
+          if stops.length
+            .table-wrap
+              table.data-table
+                thead
+                  tr
+                    th Order
+                    th Stop Name
+                    th Status
+                    th Actions
+                tbody
+                  each s in stops
+                    tr
+                      td= s.stop_order
+                      td= s.stop_name
+                      td: +statusBadge(s.status)
+                      td
+                        .table-actions
+                          a.btn.btn-sm.btn-outline(href='/admin/stops/' + s.id + '/edit') Edit
+                          form(action='/admin/stops/' + s.id + '/delete', method='POST', data-confirm='Delete this stop?')
+                            button.btn.btn-sm.btn-danger(type='submit') Delete
+          else
+            .empty-state No stops added to this route yet.
+
+          h3(style="margin-top:1.5rem;") Add Stop to this Route
+          form.auth-form(action="/admin/stops", method="POST")
+            input(type="hidden", name="routeId", value=route.id)
+            .form-row
+              .form-group
+                label(for="stopName") Stop Name
+                input#stopName.form-control(type="text", name="stopName", required)
+              .form-group
+                label(for="stopOrder") Order (optional)
+                input#stopOrder.form-control(type="number", name="stopOrder", min="1")
+            button.btn.btn-login(type="submit") Add Stop
+
+    script(src="/javascripts/main.js")

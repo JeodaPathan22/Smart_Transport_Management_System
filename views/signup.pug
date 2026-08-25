@@ -1,0 +1,89 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var active = 'signup'
+    include partials/header.pug
+
+    main.page-shell
+      .container
+        .auth-layout
+          .auth-card
+            .auth-badge Student Registration
+            h1 Create your student account
+            p Register to access route schedules, notices and bus timing for your commute.
+
+            if message
+              .alert(class=success ? 'alert-success' : 'alert-error')= message
+
+            if !success
+              form.auth-form(action="/signup", method="POST")
+                .form-group
+                  label(for="fullName") Full name
+                  .input-wrapper
+                    input#fullName.form-control(type="text", name="fullName", placeholder="Enter your full name", required)
+                    i.fas.fa-user.input-icon
+
+                .form-group
+                  label(for="signupEmail") University email
+                  .input-wrapper
+                    input#signupEmail.form-control(type="email", name="email", placeholder="name@metrouni.edu.bd", required)
+                    i.fas.fa-envelope.input-icon
+
+                .form-group
+                  label(for="studentIdInput") Student ID
+                  .input-wrapper
+                    input#studentIdInput.form-control(type="text", name="studentId", placeholder="e.g. 2023-1-60-001", required)
+                    i.fas.fa-id-card.input-icon
+
+                .form-group
+                  label(for="department") Department
+                  .input-wrapper
+                    input#department.form-control(type="text", name="department", placeholder="e.g. Computer Science & Engineering")
+                    i.fas.fa-graduation-cap.input-icon
+
+                .form-group
+                  label(for="phone") Phone number #[span(style="color: var(--text-muted); font-weight: 400;") (optional)]
+                  .input-wrapper
+                    input#phone.form-control(type="tel", name="phone", placeholder="01XXXXXXXXX")
+                    i.fas.fa-phone.input-icon
+
+                .form-group
+                  label(for="signupPassword") Password
+                  .input-wrapper
+                    input#signupPassword.form-control(type="password", name="password", placeholder="At least 6 characters", minlength="6", required)
+                    i.fas.fa-lock.input-icon
+
+                .form-group
+                  label(for="confirmPassword") Confirm password
+                  .input-wrapper
+                    input#confirmPassword.form-control(type="password", name="confirmPassword", placeholder="Re-enter your password", minlength="6", required)
+                    i.fas.fa-lock.input-icon
+
+                button.btn.btn-login(type="submit")
+                  i.fas.fa-user-plus
+                  |  Submit Registration
+
+            .auth-footer
+              span Already approved?
+              a(href="/login-student") Sign in here
+
+          .auth-sidebar
+            h2 How registration works
+            ul.auth-list
+              li
+                i.fas.fa-pen-to-square
+                span Submit your registration details
+              li
+                i.fas.fa-hourglass-half
+                span Your account status starts as Pending
+              li
+                i.fas.fa-user-check
+                span An Admin reviews and approves your account
+              li
+                i.fas.fa-right-to-bracket
+                span Log in once approved to see routes, schedules & notices
+            p(style="margin-top: 1.2rem; font-size: 0.85rem;") Driver accounts are created only by the Admin and cannot be self-registered.
+
+    include partials/footer.pug

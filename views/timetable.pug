@@ -1,0 +1,50 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var active = 'timetable'
+    include partials/header.pug
+
+    main.page-shell
+      .container
+        .page-card
+          h1 Bus Timetable
+          p Official departure and arrival timings, set by the Admin and always up to date. Driver notices about temporary delays are shown separately on the #[a(href="/notices") Notices] page and never change the official schedule below.
+
+          .page-toolbar
+            form.filter-form(action="/timetable", method="GET")
+              label(for="periodFilter", style="font-weight:600; font-size:0.85rem;") Schedule period:
+              select#periodFilter.form-control(name="period", onchange="this.form.submit()")
+                each p in periods
+                  option(value=p, selected=(p === period))= titleCase(p)
+
+        .info-card
+          .info-card-header
+            .header-title
+              i.fas.fa-clock
+              h3= titleCase(period) + ' Schedule'
+          if schedules && schedules.length
+            .table-wrap
+              table.data-table
+                thead
+                  tr
+                    th Route
+                    th Bus
+                    th Arrival (to Campus)
+                    th Departure (from Campus)
+                    th Operating Days
+                    th Notes
+                tbody
+                  each s in schedules
+                    tr
+                      td= s.route_name
+                      td= s.bus_name || s.bus_number
+                      td= s.arrival_time ? formatTime12h(s.arrival_time) : '—'
+                      td= s.departure_time ? formatTime12h(s.departure_time) : '—'
+                      td= s.operating_days
+                      td.muted= s.notes || '—'
+          else
+            .empty-state No #{titleCase(period)} schedules have been published yet. Please check back soon.
+
+    include partials/footer.pug

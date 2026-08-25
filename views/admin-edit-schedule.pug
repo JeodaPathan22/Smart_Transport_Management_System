@@ -1,0 +1,64 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var panelTitle = 'Admin Panel'
+    include partials/dashboard-header.pug
+
+    main.dashboard-shell
+      .container
+        a.btn.btn-outline.btn-sm(href="/admin-panel?tab=schedules", style="margin-bottom:1rem;")
+          i.fas.fa-arrow-left
+          |  Back to Schedule Management
+
+        include partials/flash.pug
+
+        .section-block(style="max-width: 700px;")
+          h3 Edit Schedule
+          p.section-desc Changes here are reflected immediately on the public Timetable page - no code changes needed.
+          form.auth-form(action='/admin/schedules/' + schedule.id + '/update', method="POST")
+            .form-row
+              .form-group
+                label(for="busId") Bus
+                select#busId.form-control(name="busId", required)
+                  each bus in buses
+                    option(value=bus.id, selected=(schedule.bus_id === bus.id))= bus.bus_number + (bus.bus_name ? ' - ' + bus.bus_name : '')
+              .form-group
+                label(for="routeId") Route
+                select#routeId.form-control(name="routeId", required)
+                  each route in routes
+                    option(value=route.id, selected=(schedule.route_id === route.id))= route.route_name
+              .form-group
+                label(for="period") Schedule Period
+                select#period.form-control(name="period")
+                  each p in periods
+                    option(value=p, selected=(schedule.period === p))= titleCase(p)
+            .form-row
+              .form-group
+                label(for="arrivalTime") Arrival Time (to Campus)
+                input#arrivalTime.form-control(type="time", name="arrivalTime", value=schedule.arrival_time)
+              .form-group
+                label(for="departureTime") Departure Time (from Campus)
+                input#departureTime.form-control(type="time", name="departureTime", value=schedule.departure_time)
+              .form-group
+                label(for="operatingDays") Operating Days
+                input#operatingDays.form-control(type="text", name="operatingDays", value=schedule.operating_days)
+            .form-row
+              .form-group
+                label(for="effectiveFrom") Effective From
+                input#effectiveFrom.form-control(type="date", name="effectiveFrom", value=schedule.effective_from)
+              .form-group
+                label(for="effectiveTo") Effective To (optional)
+                input#effectiveTo.form-control(type="date", name="effectiveTo", value=schedule.effective_to)
+              .form-group
+                label(for="status") Status
+                select#status.form-control(name="status")
+                  option(value="active", selected=(schedule.status === 'active')) Active
+                  option(value="inactive", selected=(schedule.status === 'inactive')) Inactive
+            .form-group
+              label(for="notes") Notes
+              input#notes.form-control(type="text", name="notes", value=schedule.notes)
+            button.btn.btn-login(type="submit") Save Changes
+
+    script(src="/javascripts/main.js")

@@ -1,0 +1,88 @@
+header.site-header
+  .container
+    .header-wrapper
+      .logo-container
+        a(href="/")
+          i.fa-solid.fa-bus-simple
+          span.brand-title STMS
+
+      nav.main-nav
+        ul.nav-list
+          li.nav-item: a.nav-link(href="/", class=active === 'home' ? 'active' : '') Home
+          li.nav-item: a.nav-link(href="/routes", class=active === 'routes' ? 'active' : '') Routes
+          li.nav-item: a.nav-link(href="/timetable", class=active === 'timetable' ? 'active' : '') Timetable
+          li.nav-item: a.nav-link(href="/notices", class=active === 'notices' ? 'active' : '') Notices
+          li.nav-item: a.nav-link(href="/about", class=active === 'about' ? 'active' : '') About
+          li.nav-item: a.nav-link(href="/contact", class=active === 'contact' ? 'active' : '') Contact
+
+      .header-actions
+        if user && user.role === 'student'
+          .profile-dropdown
+            button.profile-trigger(type="button")
+              .profile-avatar= (user.fullName || user.email || 'S').charAt(0).toUpperCase()
+              .profile-meta
+                span Student Portal
+                strong= user.fullName || user.email || 'Student'
+            .profile-menu
+              a.profile-menu-item(href="/student-dashboard")
+                i.fas.fa-gauge
+                span Dashboard
+              a.profile-menu-item(href="/logout")
+                i.fas.fa-sign-out-alt
+                span Logout
+        else if user && user.role === 'driver'
+          .profile-dropdown
+            button.profile-trigger(type="button")
+              .profile-avatar= (user.fullName || 'D').charAt(0).toUpperCase()
+              .profile-meta
+                span Driver Portal
+                strong= user.fullName || 'Driver'
+            .profile-menu
+              a.profile-menu-item(href="/driver-dashboard")
+                i.fas.fa-gauge
+                span Dashboard
+              a.profile-menu-item(href="/logout")
+                i.fas.fa-sign-out-alt
+                span Logout
+        else if user && user.role === 'admin'
+          .profile-dropdown
+            button.profile-trigger(type="button")
+              .profile-avatar A
+              .profile-meta
+                span Admin Portal
+                strong= user.fullName || user.username || 'Admin'
+            .profile-menu
+              a.profile-menu-item(href="/admin-panel")
+                i.fas.fa-gauge
+                span Admin Panel
+              a.profile-menu-item(href="/logout")
+                i.fas.fa-sign-out-alt
+                span Logout
+        else
+          .login-dropdown
+            button#loginBtn.btn.btn-login(type="button")
+              i.fas.fa-sign-in-alt
+              |  Login
+              i.fas.fa-chevron-down.dropdown-icon
+
+            .dropdown-menu#loginMenu
+              a.dropdown-item(href="/login-student")
+                i.fas.fa-user-graduate
+                .item-text
+                  strong Login as Student
+                  span Access route schedules & pass
+              a.dropdown-item(href="/login-driver")
+                i.fas.fa-id-card-clip
+                .item-text
+                  strong Login as Driver
+                  span Manage trips & updates
+              a.dropdown-item(href="/signup")
+                i.fas.fa-user-plus
+                .item-text
+                  strong Sign Up
+                  span Create a new account
+              a.dropdown-item(href="/login-admin")
+                i.fas.fa-user-shield
+                .item-text
+                  strong Admin Login
+                  span Manage routes and accounts

@@ -1,0 +1,192 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var active = ''
+    include partials/header.pug
+    include partials/mixins.pug
+
+    main.dashboard-shell
+      .container
+        .dashboard-intro
+          h1 Welcome, #{driverProfile.full_name}
+          p Your assigned bus, route and official schedule are shown below. You can report a delay or breakdown for students - you cannot edit routes, stops, or schedules.
+
+        include partials/flash.pug
+
+        .info-grid
+          .info-card
+            .info-card-header
+              .header-title
+                i.fas.fa-id-card
+                h3 Account Details
+            p Email: #{driverProfile.email}
+            p Phone: #{driverProfile.phone || 'Not provided'}
+            p Status: #{titleCase(driverProfile.status)}
+
+          .info-card
+            .info-card-header
+              .header-title
+                i.fas.fa-bus
+                h3 Assigned Bus
+            if driverProfile.bus_id
+              p Bus Number: #{driverProfile.bus_number}
+              if driverProfile.bus_name
+                p Bus Name: #{driverProfile.bus_name}
+              if driverProfile.capacity
+                p Capacity: #{driverProfile.capacity} seats
+            else
+              p No bus assigned yet. Please contact the Admin.
+
+          .info-card
+            .info-card-header
+              .header-title
+                i.fas.fa-route
+                h3 Assigned Route
+            if driverProfile.assigned_route_id
+              p Route: #{driverProfile.route_name}
+            else
+              p No route assigned yet. Please contact the Admin.
+
+        .section-block
+          h3 Trip Status
+          p.section-desc Start a trip when you begin driving. End the trip when you arrive, or report a breakdown if the bus cannot continue - the Admin sees this immediately, and students checking your route today will see it too.
+          if !driverProfile.bus_id
+            .empty-state You need an assigned bus before you can start a trip. Please contact the Admin.
+          else if currentTrip
+            .info-grid
+              .info-card
+                .info-card-header
+                  .header-title
+                    i.fas.fa-bus
+                    h3 Current Trip
+                p Route: #{currentTrip.route_name || 'Not assigned'}
+                p Started: #{formatDateTimeHuman(currentTrip.started_at)}
+                p: +tripStatusBadge(currentTrip.status)
+            .table-actions(style="margin-top:1rem;")
+              form(action='/driver-dashboard/trip/' + currentTrip.id + '/end', method='POST')
+                button.btn.btn-login(type='submit')
+                  i.fas.fa-flag-checkered
+                  |  End Trip
+
+            h4(style="margin-top:1.5rem; font-size:0.95rem;") Report Breakdown
+            p.section-desc A mechanical fault or other fault that stops the bus continuing its trip - kept separate from a Delay report.
+            form.notice-form(action='/driver-dashboard/trip/' + currentTrip.id + '/breakdown', method='POST', style="margin-top:0.6rem;")
+              .form-row
+                .form-group
+                  label(for="breakdownReason") Reason
+                  select#breakdownReason.form-control(name="reason", required)
+                    each reason in breakdownReasons
+                      option(value=reason)= reason
+                .form-group
+                  label(for="breakdownStop") Location / Stop (optional)
+                  select#breakdownStop.form-control(name="stopId")
+                    option(value="") Not specified
+                    each stop in routeStops
+                      option(value=stop.id)= stop.stop_name
+              .form-group
+                label(for="breakdownReasonOther") If "Other", briefly explain
+                input#breakdownReasonOther.form-control(type="text", name="reasonOther", placeholder='Only used if you picked "Other" above', maxlength="255")
+              div
+                button.btn.btn-danger(type='submit')
+                  i.fas.fa-triangle-exclamation
+                  |  Report Breakdown
+          else
+            form(action='/driver-dashboard/trip/start', method='POST')
+              button.btn.btn-login(type='submit')
+                i.fas.fa-play
+                |  Start Trip
+
+          if recentTrips && recentTrips.length
+            .table-wrap(style="margin-top:1.5rem;")
+              table.data-table
+                thead
+                  tr
+                    th Route
+                    th Status
+                    th Started
+                    th Ended
+                tbody
+                  each t in recentTrips
+                    tr
+                      td= t.route_name || '—'
+                      td: +tripStatusBadge(t.status)
+                      td.muted= t.started_at ? formatDateTimeHuman(t.started_at) : '—'
+                      td.muted= t.ended_at ? formatDateTimeHuman(t.ended_at) : '—'
+
+        .section-block
+          h3 Official Schedule
+          p.section-desc This is read-only - set by the Admin. You cannot change departure/arrival times, routes or stops.
+          if schedules.length
+            .table-wrap
+              table.data-table
+                thead
+                  tr
+                    th Route
+                    th Arrival
+                    th Departure
+                    th Days
+                    th Period
+                    th Notes
+                tbody
+                  each s in schedules
+                    tr
+                      td= s.route_name
+                      td= s.arrival_time ? formatTime12h(s.arrival_time) : '—'
+                      td= s.departure_time ? formatTime12h(s.departure_time) : '—'
+                      td= s.operating_days
+                      td= titleCase(s.period)
+                      td.muted= s.notes || '—'
+          else
+            .empty-state No schedule has been assigned to your bus yet.
+
+        .section-block
+          h3 Report a Delay
+          p.section-desc Let students know your bus is running late - pick a reason, where it happened, and how long. Students checking your route/date will automatically see an updated estimated time. This does not change the official schedule.
+          if !driverProfile.bus_id
+            .empty-state You need an assigned bus before you can report a delay. Please contact the Admin.
+          else
+            form.notice-form(action="/driver-dashboard/delay-report", method="POST")
+              .form-row
+                .form-group
+                  label(for="delayReason") Reason
+                  select#delayReason.form-control(name="reason", required)
+                    each reason in delayReasons
+                      option(value=reason)= reason
+                .form-group
+                  label(for="delayStop") Location / Stop (optional)
+                  select#delayStop.form-control(name="stopId")
+                    option(value="") Not specified
+                    each stop in routeStops
+                      option(value=stop.id)= stop.stop_name
+              .form-row
+                .form-group
+                  label(for="delayDuration") Delay Duration
+                  select#delayDuration.form-control(name="delayMinutes", required)
+                    each mins in delayDurations
+                      option(value=mins)= (mins < 60 ? mins + ' minutes' : '1 hour')
+                .form-group
+                  label(for="delayReasonOther") If "Other", briefly explain
+                  input#delayReasonOther.form-control(type="text", name="reasonOther", placeholder='Only used if you picked "Other" above', maxlength="255")
+              div
+                button.btn.btn-login(type="submit")
+                  i.fas.fa-bullhorn
+                  |  Report Delay
+
+        .section-block
+          h3 My Recent Notices
+          if myNotices.length
+            ul.notice-list
+              each n in myNotices
+                li.notice-item
+                  .notice-icon
+                    i.fas.fa-bullhorn
+                  .notice-content
+                    +statusBadge(n.notice_type)
+                    p= n.message
+                    span.notice-date= formatDateTimeHuman(n.created_at)
+          else
+            .empty-state You haven't reported anything yet.
+
+    include partials/footer.pug

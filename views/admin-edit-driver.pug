@@ -1,0 +1,55 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var panelTitle = 'Admin Panel'
+    include partials/dashboard-header.pug
+
+    main.dashboard-shell
+      .container
+        a.btn.btn-outline.btn-sm(href="/admin-panel?tab=drivers", style="margin-bottom:1rem;")
+          i.fas.fa-arrow-left
+          |  Back to Driver Management
+
+        include partials/flash.pug
+
+        .section-block(style="max-width: 640px;")
+          h3 Edit Driver
+          p.section-desc= driver.full_name
+          form.auth-form(action='/admin/drivers/' + driver.id + '/update', method="POST")
+            .form-row
+              .form-group
+                label(for="fullName") Full Name
+                input#fullName.form-control(type="text", name="fullName", value=driver.full_name, required)
+              .form-group
+                label(for="email") Email
+                input#email.form-control(type="email", name="email", value=driver.email, required)
+            .form-row
+              .form-group
+                label(for="phone") Phone
+                input#phone.form-control(type="tel", name="phone", value=driver.phone)
+              .form-group
+                label(for="status") Status
+                select#status.form-control(name="status")
+                  option(value="active", selected=(driver.status === 'active')) Active
+                  option(value="inactive", selected=(driver.status === 'inactive')) Inactive
+            .form-row
+              .form-group
+                label(for="busId") Assigned Bus
+                select#busId.form-control(name="busId")
+                  option(value="") Unassigned
+                  each bus in buses
+                    option(value=bus.id, selected=(driver.bus_id === bus.id))= bus.bus_number + (bus.bus_name ? ' - ' + bus.bus_name : '')
+              .form-group
+                label(for="routeId") Assigned Route
+                select#routeId.form-control(name="routeId")
+                  option(value="") Unassigned
+                  each route in routes
+                    option(value=route.id, selected=(driver.route_id === route.id))= route.route_name
+            .form-group
+              label(for="password") New Password (leave blank to keep current password)
+              input#password.form-control(type="password", name="password", placeholder="••••••••")
+            button.btn.btn-login(type="submit") Save Changes
+
+    script(src="/javascripts/main.js")

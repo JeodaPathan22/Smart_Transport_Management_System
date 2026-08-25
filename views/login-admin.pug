@@ -1,0 +1,53 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var active = ''
+    include partials/header.pug
+
+    main.page-shell
+      .container
+        .auth-layout
+          .auth-card
+            .auth-badge Admin Portal
+            h1 Administrator access
+            p Manage routes, drivers, students, buses and schedules from one secure dashboard.
+
+            if message
+              .alert.alert-error= message
+
+            form.auth-form(action="/login-admin", method="POST")
+              .form-group
+                label(for="adminUsername") Username
+                .input-wrapper
+                  input#adminUsername.form-control(type="text", name="username", placeholder="Enter admin username", required)
+                  i.fas.fa-user.input-icon
+
+              .form-group
+                label(for="adminPassword") Password
+                .input-wrapper
+                  input#adminPassword.form-control(type="password", name="password", placeholder="Enter admin password", required)
+                  i.fas.fa-lock.input-icon
+
+              button.btn.btn-login(type="submit")
+                i.fas.fa-sign-in-alt
+                |  Sign In
+
+          .auth-sidebar
+            h2 Admin controls
+            ul.auth-list
+              li
+                i.fas.fa-user-check
+                span Approve or reject student registrations
+              li
+                i.fas.fa-id-card
+                span Create and manage driver accounts
+              li
+                i.fas.fa-bus
+                span Manage buses, routes, stops & schedules
+              li
+                i.fas.fa-bullhorn
+                span Create and manage transport notices
+
+    include partials/footer.pug

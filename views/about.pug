@@ -1,0 +1,44 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var active = 'about'
+    include partials/header.pug
+
+    main.page-shell
+      .container
+        .page-card
+          h1 About Our Transport System
+          p The Smart Transport Management System helps students, staff, and drivers stay connected with reliable campus transportation for Metropolitan University, Sylhet.
+
+          .info-grid
+            .info-card
+              .info-card-header
+                .header-title
+                  i.fas.fa-shield-alt
+                  h3 Safe & Reliable
+              p We prioritize punctual service, clear communication, and secure travel for every passenger.
+            .info-card
+              .info-card-header
+                .header-title
+                  i.fas.fa-users
+                  h3 For Everyone
+              p Our transport network is designed to support students, faculty, and visitors with comfortable access to campus.
+            .info-card
+              .info-card-header
+                .header-title
+                  i.fas.fa-database
+                  h3 Database-Driven
+              p Every route, stop and schedule shown in this app is managed live by the Admin Panel - no bus timings are hard-coded, so updates appear instantly for everyone.
+
+        .page-card
+          .info-card-header
+            .header-title
+              i.fas.fa-satellite-dish
+              h3 Live GPS Tracking
+          .future-feature-card
+            i.fas.fa-clock
+            span Reserved for a future release once university buses are fitted with GPS hardware. No simulated or fake locations are shown anywhere in this app today.
+
+    include partials/footer.pug

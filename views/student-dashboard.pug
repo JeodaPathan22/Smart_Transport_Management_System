@@ -1,0 +1,126 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var active = ''
+    include partials/header.pug
+    include partials/mixins.pug
+
+    main.dashboard-shell
+      .container
+        .dashboard-intro
+          h1 Welcome, #{student.full_name}
+          p Check live bus status for any route and date, and see routes, stops and notices - all pulled live from the database.
+
+        include partials/flash.pug
+
+        .info-grid
+          .info-card
+            .info-card-header
+              .header-title
+                i.fas.fa-user-graduate
+                h3 Account Details
+            p Student ID: #{student.student_id}
+            p Email: #{student.email}
+            if student.department
+              p Department: #{student.department}
+
+          .info-card
+            .info-card-header
+              .header-title
+                i.fas.fa-bus
+                h3 Check Bus Status
+            form.auth-form(action="/student-dashboard", method="GET")
+              .form-group
+                label(for="dashRouteSelect") Select Route
+                select#dashRouteSelect.form-control(name="routeId", required)
+                  option(value="", disabled=true, selected=!selectedRouteId) Choose a route
+                  each route in routes
+                    option(value=route.id, selected=(route.id === selectedRouteId))= route.route_name
+              .form-group
+                label(for="dashDateSelect") Select Date
+                input#dashDateSelect.form-control(type="date", name="date", value=selectedDate, required)
+              button.btn.btn-login(type="submit")
+                i.fas.fa-search
+                |  Check Status
+
+        .section-block
+          .section-block-header
+            h3 Bus Status Results
+          if selectedRouteId && !selectedRoute
+            .empty-state This route is no longer available. Please choose another route above.
+          else if statusResults !== null
+            p.section-desc= 'Showing ' + selectedRoute.route_name + ' \u2014 ' + formatDateHuman(selectedDate) + (selectedDate === todayStr ? ' (Today)' : '')
+            if selectedRoute.stops && selectedRoute.stops.length
+              p.muted= selectedRoute.stops.map(function(s){ return s.stop_name; }).join(' \u2192 ')
+            if statusResults.length
+              .bus-result-list
+                each r in statusResults
+                  .bus-result-card
+                    .bus-result-main
+                      h4 Bus #{r.bus_name || r.bus_number}
+                      p= r.route_name
+                    .bus-result-meta
+                      if r.arrival_time
+                        .bus-result-time
+                          span.time-slot Arrival
+                          span.time= formatTime12h(r.arrival_time)
+                      if r.departure_time
+                        .bus-result-time
+                          span.time-slot Departure
+                          span.time= formatTime12h(r.departure_time)
+                      +statusBadge(r.status.code)
+                    if r.status.code === 'delayed'
+                      p.bus-result-notice= r.status.notice.message
+                      if r.status.estimatedArrival
+                        p.bus-result-notice Estimated Arrival: #{formatTime12h(r.status.estimatedArrival)}
+                      if r.status.estimatedDeparture
+                        p.bus-result-notice Estimated Departure: #{formatTime12h(r.status.estimatedDeparture)}
+                    else if r.status.code === 'breakdown'
+                      p.bus-result-notice= r.status.notice.message
+                    else if r.status.code === 'not_running'
+                      p.bus-result-notice= r.status.notice ? r.status.notice.message : 'This bus is not running on the selected date.'
+                    else if r.status.notice && r.status.notice.message
+                      p.bus-result-notice= r.status.notice.message
+            else
+              .empty-state No Regular-period schedules found for this route yet. Try the #[a(href="/timetable") full Timetable] for other periods.
+          else
+            p.section-desc Select a route and a date above, then tap "Check Status" to see that day's buses.
+
+        .section-block
+          .section-block-header
+            h3 Your Routes & Stops
+            a.view-all-link(href="/routes") View All
+          if routes && routes.length
+            .info-grid
+              each route in routes.slice(0, 3)
+                .info-card
+                  .info-card-header
+                    .header-title
+                      i.fas.fa-route
+                      h3= route.route_name
+                  if route.stops && route.stops.length
+                    p.muted= route.stops.map(function(s){ return s.stop_name; }).join(' \u2192 ')
+          else
+            .empty-state No active routes published yet.
+
+        .section-block
+          .section-block-header
+            h3 Recent Notices
+            a.view-all-link(href="/notices") View All
+          if notices && notices.length
+            ul.notice-list
+              each n in notices
+                li.notice-item
+                  .notice-icon
+                    i.fas.fa-bullhorn
+                  .notice-content
+                    h5= n.posted_by + ' - ' + (n.bus_name || n.bus_number || n.route_name || 'General')
+                    +statusBadge(n.notice_type)
+                    p= n.message
+                    span.notice-date= formatDateTimeHuman(n.created_at)
+          else
+            .empty-state No notices posted yet.
+
+    include partials/footer.pug

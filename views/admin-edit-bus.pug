@@ -1,0 +1,45 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var panelTitle = 'Admin Panel'
+    include partials/dashboard-header.pug
+
+    main.dashboard-shell
+      .container
+        a.btn.btn-outline.btn-sm(href="/admin-panel?tab=buses", style="margin-bottom:1rem;")
+          i.fas.fa-arrow-left
+          |  Back to Bus Management
+
+        include partials/flash.pug
+
+        .section-block(style="max-width: 640px;")
+          h3 Edit Bus
+          p.section-desc= bus.bus_number
+          form.auth-form(action='/admin/buses/' + bus.id + '/update', method="POST")
+            .form-row
+              .form-group
+                label(for="busNumber") Bus Number
+                input#busNumber.form-control(type="text", name="busNumber", value=bus.bus_number, required)
+              .form-group
+                label(for="busName") Bus Name
+                input#busName.form-control(type="text", name="busName", value=bus.bus_name)
+            .form-row
+              .form-group
+                label(for="capacity") Capacity
+                input#capacity.form-control(type="number", name="capacity", min="1", value=bus.capacity)
+              .form-group
+                label(for="status") Status
+                select#status.form-control(name="status")
+                  option(value="active", selected=(bus.status === 'active')) Active
+                  option(value="inactive", selected=(bus.status === 'inactive')) Inactive
+            .form-group
+              label(for="routeId") Assigned Route
+              select#routeId.form-control(name="routeId")
+                option(value="") Unassigned
+                each route in routes
+                  option(value=route.id, selected=(bus.route_id === route.id))= route.route_name
+            button.btn.btn-login(type="submit") Save Changes
+
+    script(src="/javascripts/main.js")

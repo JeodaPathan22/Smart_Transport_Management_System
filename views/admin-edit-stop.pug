@@ -1,0 +1,39 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var panelTitle = 'Admin Panel'
+    include partials/dashboard-header.pug
+
+    main.dashboard-shell
+      .container
+        a.btn.btn-outline.btn-sm(href="/admin-panel?tab=stops", style="margin-bottom:1rem;")
+          i.fas.fa-arrow-left
+          |  Back to Stop Management
+
+        include partials/flash.pug
+
+        .section-block(style="max-width: 640px;")
+          h3 Edit Stop
+          form.auth-form(action='/admin/stops/' + stop.id + '/update', method="POST")
+            .form-group
+              label(for="routeId") Route
+              select#routeId.form-control(name="routeId", required)
+                each route in routes
+                  option(value=route.id, selected=(stop.route_id === route.id))= route.route_name
+            .form-row
+              .form-group
+                label(for="stopName") Stop Name
+                input#stopName.form-control(type="text", name="stopName", value=stop.stop_name, required)
+              .form-group
+                label(for="stopOrder") Order
+                input#stopOrder.form-control(type="number", name="stopOrder", min="1", value=stop.stop_order, required)
+            .form-group
+              label(for="status") Status
+              select#status.form-control(name="status")
+                option(value="active", selected=(stop.status === 'active')) Active
+                option(value="inactive", selected=(stop.status === 'inactive')) Inactive
+            button.btn.btn-login(type="submit") Save Changes
+
+    script(src="/javascripts/main.js")

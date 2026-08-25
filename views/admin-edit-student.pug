@@ -1,0 +1,51 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var panelTitle = 'Admin Panel'
+    include partials/dashboard-header.pug
+
+    main.dashboard-shell
+      .container
+        a.btn.btn-outline.btn-sm(href="/admin-panel?tab=students", style="margin-bottom:1rem;")
+          i.fas.fa-arrow-left
+          |  Back to Student Management
+
+        include partials/flash.pug
+
+        .section-block(style="max-width: 640px;")
+          h3 Edit Student
+          p.section-desc= student.full_name + ' (' + student.student_id + ')'
+          form.auth-form(action='/admin/students/' + student.id + '/update', method="POST")
+            .form-row
+              .form-group
+                label(for="fullName") Full Name
+                input#fullName.form-control(type="text", name="fullName", value=student.full_name, required)
+              .form-group
+                label(for="email") Email
+                input#email.form-control(type="email", name="email", value=student.email, required)
+            .form-row
+              .form-group
+                label(for="studentId") Student ID
+                input#studentId.form-control(type="text", name="studentId", value=student.student_id, required)
+              .form-group
+                label(for="department") Department
+                input#department.form-control(type="text", name="department", value=student.department)
+            .form-row
+              .form-group
+                label(for="phone") Phone
+                input#phone.form-control(type="tel", name="phone", value=student.phone)
+              .form-group
+                label(for="status") Status
+                select#status.form-control(name="status")
+                  option(value="pending", selected=(student.status === 'pending')) Pending
+                  option(value="approved", selected=(student.status === 'approved')) Approved
+                  option(value="rejected", selected=(student.status === 'rejected')) Rejected
+                  option(value="suspended", selected=(student.status === 'suspended')) Suspended
+            .form-group
+              label(for="password") New Password (leave blank to keep current password)
+              input#password.form-control(type="password", name="password", placeholder="••••••••")
+            button.btn.btn-login(type="submit") Save Changes
+
+    script(src="/javascripts/main.js")

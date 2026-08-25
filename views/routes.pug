@@ -1,0 +1,40 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var active = 'routes'
+    include partials/header.pug
+
+    main.page-shell
+      .container
+        .page-card
+          h1 Routes & Stops
+          p Browse the transport routes serving Metropolitan University and their ordered stop sequence. Every route below is managed live from the Admin Panel.
+
+        if routes && routes.length
+          .info-grid
+            each route in routes
+              .info-card
+                .info-card-header
+                  .header-title
+                    i.fas.fa-route
+                    h3= route.route_name
+                if route.description
+                  p(style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 0.8rem;")= route.description
+                if route.stops && route.stops.length
+                  ol.route-list(style="list-style: none; padding: 0;")
+                    each stop, i in route.stops
+                      li.route-item
+                        .route-badge= i + 1
+                        .route-details
+                          h5= stop.stop_name
+                else
+                  p.muted No stops configured for this route yet.
+                .info-card-footer
+                  a.btn-block-link(href="/timetable") View Timetable for this Route
+        else
+          .page-card
+            p.muted No active routes are available right now. Please check back soon.
+
+    include partials/footer.pug

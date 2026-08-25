@@ -1,0 +1,35 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var active = 'notices'
+    include partials/header.pug
+    include partials/mixins.pug
+
+    main.page-shell
+      .container
+        .page-card
+          h1 Notices & Announcements
+          p Official updates from the Admin, plus delay/breakdown reports posted directly by drivers. These are informational only and never change the official #[a(href="/timetable") Timetable].
+
+          .info-card
+            .info-card-header
+              .header-title
+                i.fas.fa-bullhorn
+                h3 Latest Updates
+            if notices && notices.length
+              .notice-list
+                each n in notices
+                  .notice-item
+                    .notice-icon
+                      i.fas.fa-bus
+                    .notice-content
+                      h5 #{n.posted_by} - #{n.bus_name || n.bus_number || n.route_name || 'General'}
+                      +statusBadge(n.notice_type)
+                      p= n.message
+                      span.notice-date= formatDateTimeHuman(n.created_at)
+            else
+              .empty-state No notices have been posted yet.
+
+    include partials/footer.pug

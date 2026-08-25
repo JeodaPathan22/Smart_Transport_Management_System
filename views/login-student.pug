@@ -1,0 +1,64 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var active = ''
+    include partials/header.pug
+
+    main.page-shell
+      .container
+        .auth-layout
+          .auth-card
+            .auth-badge Student Portal
+            h1 Welcome back
+            p Access your bus schedules, notices and trip updates anytime.
+
+            if message
+              .alert.alert-error= message
+
+            form.auth-form(action="/login-student", method="POST")
+              .form-group
+                label(for="studentEmail") Email address
+                .input-wrapper
+                  input#studentEmail.form-control(type="email", name="email", placeholder="name@metrouni.edu.bd", required)
+                  i.fas.fa-envelope.input-icon
+
+              .form-group
+                label(for="studentId") Student ID
+                .input-wrapper
+                  input#studentId.form-control(type="text", name="studentId", placeholder="Enter your student ID", required)
+                  i.fas.fa-id-card.input-icon
+
+              .form-group
+                label(for="studentPassword") Password
+                .input-wrapper
+                  input#studentPassword.form-control(type="password", name="password", placeholder="Enter your password", required)
+                  i.fas.fa-lock.input-icon
+
+              .form-options
+                span
+                a.forgot-link(href="/signup") Create account
+
+              button.btn.btn-login(type="submit")
+                i.fas.fa-sign-in-alt
+                |  Sign In
+
+            .auth-footer
+              span Don't have an account?
+              a(href="/signup") Sign up here
+
+          .auth-sidebar
+            h2 Student benefits
+            ul.auth-list
+              li
+                i.fas.fa-route
+                span Track live route & schedule information
+              li
+                i.fas.fa-bell
+                span Read driver delay notices
+              li
+                i.fas.fa-shield-alt
+                span Secure, approval-based student access
+
+    include partials/footer.pug

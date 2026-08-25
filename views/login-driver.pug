@@ -1,0 +1,54 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var active = ''
+    include partials/header.pug
+
+    main.page-shell
+      .container
+        .auth-layout
+          .auth-card
+            .auth-badge Driver Portal
+            h1 Driver access
+            p View your assigned bus, route and schedule, and post delay notices for students.
+
+            if message
+              .alert.alert-error= message
+
+            form.auth-form(action="/login-driver", method="POST")
+              .form-group
+                label(for="driverEmail") Work email
+                .input-wrapper
+                  input#driverEmail.form-control(type="email", name="email", placeholder="driver@mu.edu.bd", required)
+                  i.fas.fa-envelope.input-icon
+
+              .form-group
+                label(for="driverPassword") Password
+                .input-wrapper
+                  input#driverPassword.form-control(type="password", name="password", placeholder="Enter your password", required)
+                  i.fas.fa-lock.input-icon
+
+              button.btn.btn-login(type="submit")
+                i.fas.fa-sign-in-alt
+                |  Sign In
+
+            .auth-footer
+              span Driver accounts are created by the Admin -
+              a(href="/contact") contact the transport office
+
+          .auth-sidebar
+            h2 Driver tools
+            ul.auth-list
+              li
+                i.fas.fa-bus
+                span View your assigned bus and route
+              li
+                i.fas.fa-clock
+                span View your official schedule
+              li
+                i.fas.fa-bullhorn
+                span Report delays and breakdowns for students
+
+    include partials/footer.pug

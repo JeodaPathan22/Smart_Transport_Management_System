@@ -1,0 +1,40 @@
+doctype html
+html(lang="en")
+  head
+    include partials/head.pug
+  body
+    - var active = 'contact'
+    include partials/header.pug
+
+    main.page-shell
+      .container
+        .page-card
+          h1 Contact Support
+          p Need help with bus routes, timetable information, or service assistance? Reach out to our transport team.
+
+          .info-card
+            .info-card-header
+              .header-title
+                i.fas.fa-headset
+                h3 Get in Touch
+            .notice-list
+              .notice-item
+                .notice-icon
+                  i.fas.fa-phone-alt
+                .notice-content
+                  h5 Phone
+                  p +880 1713-081899
+              .notice-item
+                .notice-icon
+                  i.fas.fa-envelope
+                .notice-content
+                  h5 Email
+                  p transport@metrouni.edu.bd
+              .notice-item
+                .notice-icon
+                  i.fas.fa-map-marker-alt
+                .notice-content
+                  h5 Office
+                  p Metropolitan University, Sylhet, Baraikandi, South Surma
+
+    include partials/footer.pug
