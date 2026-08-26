@@ -11,7 +11,7 @@ I wrote this README so someone who has never opened the project before can get i
 - [What it does](#what-it-does)
 - [How it's put together](#how-its-put-together)
 - [Files worth knowing about](#files-worth-knowing-about)
-- [Running it](#running-it)
+- [How to Run it](#How-to-Run-it)
 - [The database](#the-database)
 - [Login accounts](#login-accounts)
 - [How bus status is worked out](#how-bus-status-is-worked-out)
@@ -88,7 +88,7 @@ flowchart LR
 | `database/demo_operations.sql` | A SQL script for walking through the database in a terminal — SELECT, INSERT, UPDATE, DELETE, CREATE and DROP, all on a disposable demo route and a temporary table. |
 | `scripts/database-demo.js` | The automated version of the same demo (`npm run db:demo`). |
 
-## Running it
+## How to Run it 
 
 You need **Node 18 or newer** and **XAMPP with MySQL/MariaDB running**.
 
