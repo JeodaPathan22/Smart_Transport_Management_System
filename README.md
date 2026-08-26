@@ -379,7 +379,7 @@ Logout from the profile menu behaves the same for all three roles and drops you 
 
 ## What changed along the way
 
-The project started on SQLite and was moved to MySQL for XAMPP. After that it went through one bigger revision:
+The project MySQL for XAMPP. What was done:
 
 - **Student IDs are required and no longer auto-generated.** A real student already has an official ID from the university, so it's a required, unique field at signup and when an admin adds someone.
 - **The booking system was removed.** The `bookings` table is still there, unused, so older installs don't break.
@@ -388,4 +388,4 @@ The project started on SQLite and was moved to MySQL for XAMPP. After that it we
 - **Driver reports became structured.** A delay is a reason, a location and a duration; a breakdown is a reason and a location. The location options come from that driver's own route's stops in the database.
 - **Admins can create notices now**, not just review and delete driver ones, and an admin notice can set a bus or a whole route to Not Running for a specific date.
 
-Through all of that the existing admin CRUD for students, drivers, buses, routes, stops and schedules stayed exactly as it was, and the design, branding and Pug/Express/MySQL stack didn't change.
+They are all of that the existing admin CRUD for students, drivers, buses, routes, stops and schedules stayed exactly as it was, and the design, branding and Pug/Express/MySQL stack didn't change.
